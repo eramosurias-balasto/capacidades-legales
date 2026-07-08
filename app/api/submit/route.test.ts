@@ -16,7 +16,7 @@ const instGeneral = { id: 4, slug: 'general', nombre: 'General', activa: true, t
 function mockInsertOk() {
   const single = vi.fn().mockResolvedValue({ data: { id: 'resp-1' }, error: null });
   const select = vi.fn(() => ({ single }));
-  const insert = vi.fn(() => ({ select }));
+  const insert = vi.fn((_fila: unknown) => ({ select }));
   const from = vi.fn(() => ({ insert }));
   (getSupabaseAdmin as Mock).mockReturnValue({ from });
   return { insert };

@@ -1,7 +1,7 @@
 import 'server-only';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { serverEnv } from './env';
-import type { Institucion } from './database.types';
+import type { Institucion, Respuesta } from './database.types';
 
 // Único punto de contacto con Supabase (SPEC §2). Usa SUPABASE_SERVICE_ROLE_KEY, que
 // ignora RLS. SOLO debe importarse desde código de servidor (API routes / componentes de
@@ -35,4 +35,24 @@ export async function getInstitucionActiva(slug: string): Promise<Institucion | 
     throw new Error(`Error consultando institución "${slug}": ${error.message}`);
   }
   return (data as Institucion | null) ?? null;
+}
+
+/** Todas las instituciones (para etiquetar por tipo/slug en dashboard y exports). */
+export async function getInstituciones(): Promise<Institucion[]> {
+  const { data, error } = await getSupabaseAdmin()
+    .from('instituciones')
+    .select('id, slug, nombre, activa, tipo')
+    .order('id');
+  if (error) throw new Error(`Error consultando instituciones: ${error.message}`);
+  return (data as Institucion[]) ?? [];
+}
+
+/** Todas las respuestas, ordenadas por fecha de creación (asc). */
+export async function getRespuestas(): Promise<Respuesta[]> {
+  const { data, error } = await getSupabaseAdmin()
+    .from('respuestas')
+    .select('*')
+    .order('creada_en', { ascending: true });
+  if (error) throw new Error(`Error consultando respuestas: ${error.message}`);
+  return (data as Respuesta[]) ?? [];
 }
