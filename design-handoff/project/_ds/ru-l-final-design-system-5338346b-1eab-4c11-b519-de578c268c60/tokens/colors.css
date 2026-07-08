@@ -1,0 +1,70 @@
+/* ------------------------------------------------------------------
+   RU.L — Color
+   Surgical white. Ink black. One cobalt accent, used with confidence —
+   as a fill, a dot, a drawn arc — plus a single cobalt→cyan gradient
+   reserved for the signature object (the audit score). Semantic states
+   are calm and legible, never loud.
+------------------------------------------------------------------- */
+:root {
+  /* — Grounds (cold white → apple grey) — */
+  --white:      #FFFFFF;  /* page + card surface                          */
+  --paper-50:   #F5F5F7;  /* sectioned ground (bento, wells)              */
+  --paper-100:  #EEF0F5;  /* inset / track                                */
+  --paper-200:  #E3E5EA;  /* deepest neutral fill / hover on grey         */
+
+  /* — Ink — */
+  --ink-900:    #0A0A0A;  /* primary text, display                        */
+  --ink-700:    #1D1D1F;  /* body                                         */
+  --ink-500:    #6E6E73;  /* secondary                                    */
+  --ink-400:    #86868B;  /* muted — meta, captions, placeholder          */
+  --ink-300:    #B0B0B6;  /* faint — disabled                             */
+
+  /* — Hairlines — */
+  --line-strong: #D2D4DA;
+  --line:        #E3E5EA;
+  --line-faint:  #EEF0F5;
+
+  /* — The accent. Cobalt. Used with confidence. — */
+  --accent-900: #1B2E8F;  /* pressed / deepest                            */
+  --accent:     #2440CE;  /* THE accent — fills, dots, arcs               */
+  --accent-600: #3E64F0;  /* hover / lighter                              */
+  --accent-300: #4DA3FF;  /* cyan terminal of the signature gradient      */
+  --accent-tint:#EEF1F8;  /* faint cobalt wash — selection, active bg     */
+  --accent-grad: linear-gradient(135deg, #2440CE 0%, #4DA3FF 100%); /* @kind color */
+  --accent-halo: radial-gradient(circle, rgba(36,64,206,0.14) 0%, rgba(77,163,255,0.08) 34%, rgba(255,255,255,0) 62%); /* @kind color */
+
+  /* — Matter status (drafting → partner review → delivered) — */
+  --status-drafting-ink:  #B7791F;  --status-drafting-bg:  #FBF0DC;  /* amber   */
+  --status-review-ink:    #2440CE;  --status-review-bg:    #EEF1F8;  /* cobalt  */
+  --status-delivered-ink: #12A366;  --status-delivered-bg: #E7F7EF;  /* green   */
+  --status-hold-ink:      #6E6E73;  --status-hold-bg:      #F0F1F4;  /* neutral */
+
+  /* — Semantic states (calm, legible) — */
+  --success-ink: #12A366;  --success-bg: #E7F7EF;
+  --warning-ink: #B7791F;  --warning-bg: #FBF0DC;
+  --danger-ink:  #D23B3B;  --danger-bg:  #FBEAE8;
+  --info-ink:    #2440CE;  --info-bg:    #EEF1F8;
+
+  /* — Focus — a considered cobalt ring — */
+  --focus-ring:  rgba(36, 64, 206, 0.32);
+
+  /* ---- Semantic aliases (author against these) ---- */
+  --bg-page:        var(--white);
+  --bg-surface:     var(--white);
+  --bg-inset:       var(--paper-50);
+  --bg-well:        var(--paper-100);
+  --bg-hover:       var(--paper-50);
+  --bg-selected:    var(--accent-tint);
+
+  --text-primary:   var(--ink-900);
+  --text-body:      var(--ink-700);
+  --text-secondary: var(--ink-500);
+  --text-muted:     var(--ink-400);
+  --text-disabled:  var(--ink-300);
+  --text-onaccent:  var(--white);
+  --text-accent:    var(--accent);
+
+  --border-strong:  var(--line-strong);
+  --border-default: var(--line);
+  --border-faint:   var(--line-faint);
+}

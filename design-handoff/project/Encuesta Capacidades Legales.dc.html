@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/styles.css">
+  <script src="_ds/ru-l-final-design-system-5338346b-1eab-4c11-b519-de578c268c60/_ds_bundle.js"></script>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { background: var(--white); -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-600); text-decoration: underline; }
+    * { box-sizing: border-box; }
+    .prog-fill { transition: width var(--dur-slow) var(--ease-out); }
+    .rul-fade { animation: rulFade var(--dur-slow) var(--ease-out) both; }
+    @keyframes rulFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .prog-fill { transition: none !important; }
+      .rul-fade { animation: none !important; }
+    }
+    .rul-select:focus { border-color: var(--accent) !important; background-color: var(--white) !important; box-shadow: 0 0 0 3px var(--focus-ring); }
+  </style>
+</helmet>
+<div style="min-height:100vh;background:var(--white);color:var(--text-body);font-family:var(--font-text);display:flex;flex-direction:column;align-items:center;">
+
+  <!-- Masthead -->
+  <div style="width:100%;border-bottom:var(--rule-thin) solid var(--border-faint);">
+    <div style="max-width:600px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <span style="font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-secondary);">encuesta · capacidades legales</span>
+      <span style="font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);">{{ sectionLabel }}</span>
+    </div>
+  </div>
+
+  <!-- Progress track (the mechanism: draws 0 → 100) -->
+  <div style="width:100%;height:3px;background:var(--paper-100);">
+    <div class="prog-fill" style="height:100%;background:var(--accent);width:{{ progressPct }};"></div>
+  </div>
+
+  <!-- Column -->
+  <div style="width:100%;max-width:600px;margin:0 auto;padding:0 24px 64px;">
+
+    <!-- ============ PORTADA ============ -->
+    <sc-if value="{{ isPortada }}" hint-placeholder-val="{{ true }}">
+      <section class="rul-fade" data-screen-label="Portada" style="padding-top:56px;">
+        <div style="width:44px;height:6px;background:var(--accent);border-radius:2px;margin-bottom:28px;"></div>
+        <div style="font-family:var(--font-text);font-weight:var(--fw-semibold);font-size:var(--text-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-muted);margin-bottom:20px;">{{ eyebrowPortada }}</div>
+        <h1 style="margin:0;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-h1);line-height:var(--lh-snug);letter-spacing:var(--tracking-display);color:var(--text-primary);text-wrap:balance;">¿Qué tan capaz se siente de enfrentar un problema legal serio por su cuenta?</h1>
+        <p style="margin:24px 0 0;font-family:var(--font-text);font-size:var(--text-lead);line-height:var(--lh-relaxed);color:var(--text-secondary);max-width:44ch;">{{ entradaPortada }}</p>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:32px 0;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Badge" tone="neutral" hint-size="auto,28px">5–7 minutos</x-import>
+          <x-import component-from-global-scope="RULDesignSystem_533834.Badge" tone="accent" dot="{{ true }}" hint-size="auto,28px">anónimo</x-import>
+        </div>
+
+        <div style="border-top:var(--rule-thin) solid var(--border-default);padding-top:24px;margin-top:4px;">
+          <p style="margin:0 0 20px;font-family:var(--font-text);font-size:var(--text-sm);line-height:var(--lh-relaxed);color:var(--text-secondary);max-width:48ch;">Al continuar acepta el <a href="#aviso" onClick="{{ noop }}">aviso de privacidad</a> de este estudio. Sus respuestas son anónimas: no pedimos su nombre ni datos que permitan identificarle.</p>
+          <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="primary" size="lg" pill="{{ true }}" full-width="{{ true }}" onClick="{{ accept }}" hint-size="100%,54px">Acepto y quiero continuar</x-import>
+          <p style="margin:16px 0 0;font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);text-align:center;">participación voluntaria · puede detenerse en cualquier momento</p>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- ============ COHORTE ============ -->
+    <sc-if value="{{ isCohorte }}" hint-placeholder-val="{{ true }}">
+      <section class="rul-fade" data-screen-label="Cohorte / clase de Derecho" style="padding-top:40px;">
+
+        <!-- Reviewer-only variant toggle -->
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px dashed var(--line-strong);border-radius:var(--radius-sm);margin-bottom:32px;">
+          <span style="font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);flex:0 0 auto;">vista de revisión</span>
+          <div style="display:flex;gap:4px;margin-left:auto;">
+            <button onClick="{{ setEscolar }}" style="{{ tabEscolarStyle }}">escolar</button>
+            <button onClick="{{ setGeneral }}" style="{{ tabGeneralStyle }}">general</button>
+          </div>
+        </div>
+
+        <div style="font-family:var(--font-text);font-weight:var(--fw-semibold);font-size:var(--text-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">CONTACTO CON EL DERECHO</div>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-h2);line-height:var(--lh-heading);letter-spacing:var(--tracking-tight);color:var(--text-primary);text-wrap:balance;">{{ cohorteQuestion }}</h2>
+        <p style="margin:16px 0 28px;font-family:var(--font-text);font-size:var(--text-body);line-height:var(--lh-relaxed);color:var(--text-secondary);">{{ cohorteHelp }}</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <sc-for list="{{ claseOpts }}" as="opt" hint-placeholder-count="2">
+            <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">
+              <span style="{{ opt.dotStyle }}"></span>
+              <span>{{ opt.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ claseSi }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:20px;" class="rul-fade">
+            <x-import component-from-global-scope="RULDesignSystem_533834.Input" label="{{ cohorteDetalleLabel }}" placeholder="{{ cohorteDetallePlaceholder }}" hint-size="100%,66px"></x-import>
+            <div style="max-width:160px;">
+              <x-import component-from-global-scope="RULDesignSystem_533834.Input" label="¿En qué año terminaste tu última clase de derecho?" mono="{{ true }}" type="number" placeholder="2024" hint-size="100%,66px"></x-import>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="margin-top:36px;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="primary" size="lg" full-width="{{ true }}" disabled="{{ cohorteDisabled }}" onClick="{{ cohorteNext }}" hint-size="100%,52px">Continuar</x-import>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- ============ DEMOGRAFÍA ============ -->
+    <sc-if value="{{ isDemografia }}" hint-placeholder-val="{{ false }}">
+      <section class="rul-fade" data-screen-label="Demografía" style="padding-top:40px;">
+        <div style="font-family:var(--font-text);font-weight:var(--fw-semibold);font-size:var(--text-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Sobre usted</div>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-h2);line-height:var(--lh-heading);letter-spacing:var(--tracking-tight);color:var(--text-primary);">Unos datos generales</h2>
+        <p style="margin:16px 0 32px;font-family:var(--font-text);font-size:var(--text-body);line-height:var(--lh-relaxed);color:var(--text-secondary);max-width:46ch;">Sirven para describir a quienes participan. No permiten identificarle.</p>
+
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="max-width:140px;">
+            <x-import component-from-global-scope="RULDesignSystem_533834.Input" label="Edad" mono="{{ true }}" type="number" placeholder="16" hint-size="100%,66px"></x-import>
+          </div>
+
+          <div>
+            <div style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:10px;">Género</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+              <sc-for list="{{ generoOpts }}" as="opt" hint-placeholder-count="4">
+                <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:10px;">¿Se considera afrodescendiente?</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+              <sc-for list="{{ afroOpts }}" as="opt" hint-placeholder-count="3">
+                <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);margin-bottom:10px;">¿Se considera indígena?</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+              <sc-for list="{{ indigenaOpts }}" as="opt" hint-placeholder-count="3">
+                <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.4375rem;">
+            <label style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);">{{ escolaridadLabel }}</label>
+            <select class="rul-select" style="{{ selectStyle }}">
+              <option value="">Seleccione…</option>
+              <sc-for list="{{ escolaridadOpts }}" as="op" hint-placeholder-count="6">
+                <option value="{{ op }}">{{ op }}</option>
+              </sc-for>
+            </select>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.4375rem;">
+            <label style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);">Máximo nivel de estudios del padre</label>
+            <select class="rul-select" style="{{ selectStyle }}">
+              <option value="">Seleccione…</option>
+              <sc-for list="{{ nivelesOpts }}" as="op" hint-placeholder-count="7">
+                <option value="{{ op }}">{{ op }}</option>
+              </sc-for>
+            </select>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.4375rem;">
+            <label style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);">Máximo nivel de estudios de la madre</label>
+            <select class="rul-select" style="{{ selectStyle }}">
+              <option value="">Seleccione…</option>
+              <sc-for list="{{ nivelesOpts }}" as="op" hint-placeholder-count="7">
+                <option value="{{ op }}">{{ op }}</option>
+              </sc-for>
+            </select>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0.4375rem;">
+            <label style="font-family:var(--font-text);font-weight:var(--fw-medium);font-size:var(--text-xs);color:var(--text-secondary);">Entidad federativa</label>
+            <select class="rul-select" style="{{ selectStyle }}">
+              <option value="">Seleccione…</option>
+              <sc-for list="{{ entidadOpts }}" as="op" hint-placeholder-count="8">
+                <option value="{{ op }}">{{ op }}</option>
+              </sc-for>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:36px;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ demografiaNext }}" hint-size="100%,52px">Continuar</x-import>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- ============ ESCALA — INTRO ============ -->
+    <sc-if value="{{ isEscalaIntro }}" hint-placeholder-val="{{ false }}">
+      <section class="rul-fade" data-screen-label="Intro escala EAL" style="padding-top:44px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Badge" tone="accent" hint-size="auto,28px">Sección 4</x-import>
+          <span style="font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);">4 afirmaciones</span>
+        </div>
+        <h2 style="margin:0 0 8px;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-h3);line-height:var(--lh-heading);letter-spacing:var(--tracking-tight);color:var(--text-primary);">Antes de empezar esta sección</h2>
+        <p style="margin:0;font-family:var(--font-text);font-size:var(--text-body);line-height:var(--lh-relaxed);color:var(--text-body);">{{ ealInstruction }}</p>
+        <div style="border-left:var(--rule-medium) solid var(--accent);padding-left:16px;margin:28px 0 36px;">
+          <p style="margin:0;font-family:var(--font-text);font-size:var(--text-sm);line-height:var(--lh-relaxed);color:var(--text-secondary);">Verá una afirmación por pantalla. Elija en cada una la opción que mejor le describa; puede cambiar su respuesta antes de avanzar.</p>
+        </div>
+        <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ startScale }}" hint-size="100%,52px">Empezar la sección</x-import>
+      </section>
+    </sc-if>
+
+    <!-- ============ LIKERT ITEM ============ -->
+    <sc-if value="{{ isLikert }}" hint-placeholder-val="{{ false }}">
+      <section data-screen-label="Ítem Likert" style="padding-top:40px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:28px;">
+          <span style="font-family:var(--font-text);font-weight:var(--fw-semibold);font-size:var(--text-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-muted);">Sección 4</span>
+          <span style="font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);">{{ itemLabel }}</span>
+        </div>
+
+        <p key="{{ itemLabel }}" class="rul-fade" style="margin:0 0 32px;font-family:var(--font-display);font-weight:var(--fw-medium);font-size:var(--text-h3);line-height:var(--lh-heading);letter-spacing:var(--tracking-tight);color:var(--text-primary);text-wrap:pretty;min-height:2.6em;">{{ currentItemText }}</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <sc-for list="{{ likertOpts }}" as="opt" hint-placeholder-count="4">
+            <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">
+              <span style="{{ opt.dotStyle }}"></span>
+              <span>{{ opt.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-top:32px;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="ghost" size="md" onClick="{{ likertBack }}" hint-size="auto,44px">Atrás</x-import>
+          <div style="flex:1;">
+            <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="primary" size="lg" full-width="{{ true }}" disabled="{{ likertDisabled }}" onClick="{{ likertContinue }}" hint-size="100%,52px">{{ likertCtaLabel }}</x-import>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- ============ GRACIAS ============ -->
+    <sc-if value="{{ isGracias }}" hint-placeholder-val="{{ false }}">
+      <section class="rul-fade" data-screen-label="Gracias" style="padding-top:72px;text-align:center;">
+        <div style="width:44px;height:6px;background:var(--accent);border-radius:2px;margin:0 auto 32px;"></div>
+        <div style="font-family:var(--font-text);font-weight:var(--fw-semibold);font-size:var(--text-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;">Estudio de capacidades legales</div>
+        <h2 style="margin:0 auto;max-width:20ch;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-h2);line-height:var(--lh-heading);letter-spacing:var(--tracking-tight);color:var(--text-primary);">Hemos registrado sus respuestas.</h2>
+        <p style="margin:20px auto 0;max-width:42ch;font-family:var(--font-text);font-size:var(--text-body);line-height:var(--lh-relaxed);color:var(--text-secondary);">Gracias por su tiempo. Sus respuestas quedan guardadas de forma anónima y contribuyen a un estudio sobre el acceso a la justicia en México.</p>
+        <p style="margin:28px auto 0;font-family:var(--font-mono);font-size:var(--text-mono-sm);letter-spacing:var(--tracking-mono);color:var(--text-muted);">registro anónimo · núm. [núm.]</p>
+        <div style="margin-top:36px;display:flex;justify-content:center;">
+          <x-import component-from-global-scope="RULDesignSystem_533834.Button" variant="outline" size="md" onClick="{{ restart }}" hint-size="auto,44px">Volver al inicio</x-import>
+        </div>
+      </section>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 600, &quot;height&quot;: 900 },
+  &quot;eyebrowPortada&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Estudio académico · Instituto Tecnológico Autónomo de México&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;Portada&quot;
+  },
+  &quot;entradaPortada&quot;: {
+    &quot;editor&quot;: &quot;text&quot;,
+    &quot;default&quot;: &quot;Este estudio mide qué tan preparadas se sienten las personas para enfrentar problemas legales de todos los días. Su participación nos ayuda a construir un mejor país.&quot;,
+    &quot;tsType&quot;: &quot;string&quot;,
+    &quot;section&quot;: &quot;Portada&quot;
+  }
+}">
+class Component extends DCLogic {
+  state = {
+    screen: 'portada',       // portada | cohorte | demografia | escalaIntro | likert | gracias
+    variant: 'escolar',      // escolar | general
+    clase: null,             // true | false | null
+    genero: null,            // index
+    afro: null,              // 'Sí' | 'No' | 'Prefiero no decirlo'
+    indigena: null,
+    likertIndex: 0,
+    likertAnswers: {},        // {0:idx,...}
+  };
+
+  // ---- INTOCABLE: textos validados del instrumento (EAL) ----
+  EAL_INSTRUCTION = 'Ahora, piense en general en problemas legales importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?';
+  EAL_ITEMS = [
+    'Me da miedo hablar directamente con la gente para hacer valer mis derechos.',
+    'La preocupación por no expresarme con claridad puede impedirme actuar.',
+    'Evito hacer valer mis derechos porque no estoy seguro de que vaya a tener éxito.',
+    'No siempre consigo el mejor resultado para mí, porque intento evitar los conflictos.',
+  ];
+  EAL_OPTIONS = ['nada cierto', 'casi nada cierto', 'moderadamente cierto', 'totalmente cierto'];
+
+  GENEROS = ['mujer', 'hombre', 'otro', 'prefiero no decirlo'];
+  SINO3 = ['Sí', 'No', 'Prefiero no decirlo'];
+  NIVELES = ['Sin estudios', 'Primaria', 'Secundaria', 'Preparatoria o bachillerato', 'Licenciatura', 'Posgrado (maestría o doctorado)', 'Prefiero no decirlo'];
+  GRADOS = ['1.º de preparatoria', '2.º de preparatoria', '3.º de preparatoria', 'Otro'];
+  ENTIDADES = ['Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas','Chihuahua','Ciudad de México','Coahuila','Colima','Durango','Estado de México','Guanajuato','Guerrero','Hidalgo','Jalisco','Michoacán','Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro','Quintana Roo','San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatán','Zacatecas'];
+
+  // ---- navigation ----
+  accept = () => this.setState({ screen: 'cohorte' });
+  setEscolar = () => this.setState({ variant: 'escolar' });
+  setGeneral = () => this.setState({ variant: 'general' });
+  setClase = (v) => this.setState({ clase: v });
+  setGenero = (i) => this.setState({ genero: i });
+  setAfro = (v) => this.setState({ afro: v });
+  setIndigena = (v) => this.setState({ indigena: v });
+  cohorteNext = () => this.setState({ screen: 'demografia' });
+  demografiaNext = () => this.setState({ screen: 'escalaIntro' });
+  startScale = () => this.setState({ screen: 'likert', likertIndex: 0 });
+  selectOption = (i) => this.setState((s) => ({ likertAnswers: { ...s.likertAnswers, [s.likertIndex]: i } }));
+  likertContinue = () => this.setState((s) => (
+    s.likertIndex < this.EAL_ITEMS.length - 1
+      ? { likertIndex: s.likertIndex + 1 }
+      : { screen: 'gracias' }
+  ));
+  likertBack = () => this.setState((s) => (
+    s.likertIndex > 0 ? { likertIndex: s.likertIndex - 1 } : { screen: 'escalaIntro' }
+  ));
+  restart = () => this.setState({ screen: 'portada', clase: null, genero: null, afro: null, indigena: null, likertIndex: 0, likertAnswers: {} });
+  noop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+
+  // ---- style helpers ----
+  choiceStyle(selected, big) {
+    return {
+      display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', textAlign: 'left',
+      minHeight: big ? '56px' : '44px',
+      padding: big ? '1rem 1.125rem' : '0.625rem 1rem',
+      fontFamily: 'var(--font-text)',
+      fontSize: big ? 'var(--text-body)' : 'var(--text-sm)',
+      fontWeight: selected ? 'var(--fw-semibold)' : 'var(--fw-medium)',
+      color: selected ? 'var(--text-onaccent)' : 'var(--text-primary)',
+      background: selected ? 'var(--accent)' : 'var(--paper-50)',
+      border: 'var(--rule-thin) solid ' + (selected ? 'var(--accent)' : 'var(--border-default)'),
+      borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+      transition: 'background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease)',
+    };
+  }
+  dotStyle(selected) {
+    return {
+      width: '14px', height: '14px', borderRadius: 'var(--radius-pill)', flex: '0 0 auto',
+      border: selected ? 'none' : '1.5px solid var(--line-strong)',
+      background: selected ? 'var(--white)' : 'transparent',
+    };
+  }
+  chipStyle(selected) {
+    return {
+      padding: '0.5rem 1rem', minHeight: '40px',
+      fontFamily: 'var(--font-text)', fontSize: 'var(--text-sm)',
+      fontWeight: selected ? 'var(--fw-semibold)' : 'var(--fw-medium)',
+      color: selected ? 'var(--text-onaccent)' : 'var(--text-primary)',
+      background: selected ? 'var(--accent)' : 'var(--paper-50)',
+      border: 'var(--rule-thin) solid ' + (selected ? 'var(--accent)' : 'var(--border-default)'),
+      borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+      transition: 'background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease)',
+    };
+  }
+  tabStyle(active) {
+    return {
+      padding: '0.3125rem 0.75rem',
+      fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)',
+      color: active ? 'var(--text-onaccent)' : 'var(--text-secondary)',
+      background: active ? 'var(--accent)' : 'transparent',
+      border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+      transition: 'background var(--dur) var(--ease), color var(--dur) var(--ease)',
+    };
+  }
+
+  progressFor(s) {
+    switch (s.screen) {
+      case 'portada': return 0;
+      case 'cohorte': return 12;
+      case 'demografia': return 25;
+      case 'escalaIntro': return 37;
+      case 'likert': return 37 + ((s.likertIndex + 1) / this.EAL_ITEMS.length) * 25;
+      case 'gracias': return 100;
+      default: return 0;
+    }
+  }
+  sectionLabelFor(s) {
+    switch (s.screen) {
+      case 'cohorte': return 'Sección 2 de 8';
+      case 'demografia': return 'Sección 3 de 8';
+      case 'escalaIntro':
+      case 'likert': return 'Sección 4 de 8';
+      default: return '';
+    }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const escolar = s.variant === 'escolar';
+    const sel = s.likertAnswers[s.likertIndex];
+
+    const claseOpts = (escolar
+      ? [
+          { val: true, label: 'Terminé de cursarla en el ciclo escolar 2025-2026' },
+          { val: false, label: 'Estoy empezando a cursarla a partir del ciclo escolar 2026-2027' },
+        ]
+      : [
+          { val: true, label: 'Sí' },
+          { val: false, label: 'No' },
+        ]
+    ).map((o) => ({
+      label: o.label,
+      selected: s.clase === o.val,
+      onClick: () => this.setClase(o.val),
+      style: this.choiceStyle(s.clase === o.val, false),
+      dotStyle: this.dotStyle(s.clase === o.val),
+    }));
+
+    const generoOpts = this.GENEROS.map((label, i) => ({
+      label,
+      onClick: () => this.setGenero(i),
+      style: this.chipStyle(s.genero === i),
+    }));
+
+    const afroOpts = this.SINO3.map((label) => ({
+      label,
+      onClick: () => this.setAfro(label),
+      style: this.chipStyle(s.afro === label),
+    }));
+
+    const indigenaOpts = this.SINO3.map((label) => ({
+      label,
+      onClick: () => this.setIndigena(label),
+      style: this.chipStyle(s.indigena === label),
+    }));
+
+    const chevron = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%236E6E73' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 6 8 10 12 6'/%3E%3C/svg%3E\")";
+    const selectStyle = {
+      fontFamily: 'var(--font-text)', fontSize: 'var(--text-sm)', color: 'var(--text-primary)',
+      background: 'var(--paper-50) ' + chevron + ' no-repeat right 12px center',
+      border: 'var(--rule-thin) solid var(--border-default)', borderRadius: 'var(--radius-sm)',
+      padding: '0.625rem 2.25rem 0.625rem 0.75rem', width: '100%', cursor: 'pointer', outline: 'none',
+      appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+      transition: 'border-color var(--dur) var(--ease), background var(--dur) var(--ease), box-shadow var(--dur) var(--ease)',
+    };
+
+    const likertOpts = this.EAL_OPTIONS.map((label, i) => ({
+      label,
+      onClick: () => this.selectOption(i),
+      style: this.choiceStyle(sel === i, true),
+      dotStyle: this.dotStyle(sel === i),
+    }));
+
+    const lastItem = s.likertIndex === this.EAL_ITEMS.length - 1;
+
+    return {
+      // portada (tweakables)
+      eyebrowPortada: this.props.eyebrowPortada ?? 'Estudio académico · Instituto Tecnológico Autónomo de México',
+      entradaPortada: this.props.entradaPortada ?? 'Este estudio mide qué tan preparadas se sienten las personas para enfrentar problemas legales de todos los días. Su participación nos ayuda a construir un mejor país.',
+
+      // screen flags
+      isPortada: s.screen === 'portada',
+      isCohorte: s.screen === 'cohorte',
+      isDemografia: s.screen === 'demografia',
+      isEscalaIntro: s.screen === 'escalaIntro',
+      isLikert: s.screen === 'likert',
+      isGracias: s.screen === 'gracias',
+
+      // chrome
+      progressPct: this.progressFor(s).toFixed(2) + '%',
+      sectionLabel: this.sectionLabelFor(s),
+
+      // handlers
+      accept: this.accept,
+      setEscolar: this.setEscolar,
+      setGeneral: this.setGeneral,
+      cohorteNext: this.cohorteNext,
+      demografiaNext: this.demografiaNext,
+      startScale: this.startScale,
+      likertContinue: this.likertContinue,
+      likertBack: this.likertBack,
+      restart: this.restart,
+      noop: this.noop,
+
+      // cohorte
+      tabEscolarStyle: this.tabStyle(escolar),
+      tabGeneralStyle: this.tabStyle(!escolar),
+      cohorteQuestion: escolar
+        ? '¿Cuándo cursaste, o cursarás, la materia de Derecho en la escuela?'
+        : '¿Alguna vez ha cursado una clase de Derecho?',
+      cohorteHelp: escolar
+        ? ''
+        : 'Cuenta cualquier curso, taller o formación sobre Derecho, dentro o fuera de la escuela.',
+      claseOpts,
+      claseSi: s.clase === true && !escolar,
+      cohorteDetalleLabel: escolar ? '¿Cuál materia o taller?' : '¿En qué contexto?',
+      cohorteDetallePlaceholder: escolar ? 'Formación cívica y ética, taller de derechos…' : 'Preparatoria, un diplomado, el trabajo…',
+      cohorteDisabled: s.clase === null,
+
+      // demografia
+      generoOpts,
+      afroOpts,
+      indigenaOpts,
+      selectStyle,
+      escolaridadLabel: escolar ? 'Grado escolar' : 'Máximo nivel de estudios',
+      escolaridadOpts: escolar ? this.GRADOS : this.NIVELES,
+      nivelesOpts: this.NIVELES,
+      entidadOpts: this.ENTIDADES,
+
+      // escala
+      ealInstruction: this.EAL_INSTRUCTION,
+
+      // likert
+      currentItemText: this.EAL_ITEMS[s.likertIndex],
+      itemLabel: 'Afirmación ' + (s.likertIndex + 1) + ' de ' + this.EAL_ITEMS.length,
+      likertOpts,
+      likertDisabled: sel === undefined,
+      likertCtaLabel: lastItem ? 'Terminar' : 'Continuar',
+    };
+  }
+}
+</script>
+</body>
+</html>

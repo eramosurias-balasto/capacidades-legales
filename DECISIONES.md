@@ -116,3 +116,30 @@ separar/estudiar DIF entre poblaciones. Las 5 escalas y su puntuación (§6) son
 - `nivel_educativo_padre` y `nivel_educativo_madre` se preguntan a TODOS (escolar y general).
 - Valores canónicos y etiquetas viven en `lib/catalogos.ts`; la validación condicional en
   `lib/submit-validation.ts` (con tests).
+
+## D12 — Rediseño visual (RU.L Design System) + columnas entidad / año (0004)
+
+Rediseño de las rutas **públicas** (`/encuesta`, `/gracias`) según el handoff de Claude Design
+(`design-handoff/`). El dashboard NO cambia de aspecto; scoring e instrumento intocables.
+
+- **Tokens con alcance**: los tokens del sistema (`styles/ru/*`) se cargan SOLO en
+  `app/(publico)/layout.tsx` (grupo de rutas). No llegan al dashboard ni a otras rutas.
+- **Primitivas reimplementadas** con tokens en `components/encuesta/ds.tsx` (Button, Input,
+  Badge, ChoiceOption, Chip, SelectField, ProgressHairline, Masthead) — no se depende del
+  bundle compilado del prototipo. El `ReviewVariantToggle` del prototipo NO se porta.
+- **Un ítem por pantalla**; progreso real de 8 secciones (consentimiento, cohorte, demografía,
+  EAJ, EAL, CLG, IAJ, DPJ) con hairline animada; `prefers-reduced-motion` respetado.
+  Accesibilidad: `role="radiogroup"/"radio"` + `aria-checked`, touch targets ≥48px, foco visible.
+- **Registro usted** en todo el copy nuevo; los textos del instrumento (`lib/instrumento.ts`)
+  siguen intocables y salen de ahí. El copy del mockup (portada, transiciones, gracias) se
+  adopta tal cual; donde el pedido del autor difiere del mockup, gana el pedido.
+- **Gracias**: folio anónimo = últimos 6 caracteres del uuid (sin guiones), en mono. Se pasa
+  por query `?folio=` desde el flujo; `/api/submit` no cambia de forma salvo 2 campos nuevos.
+- **`entidad` (0004)**: obligatoria para TODOS. Se almacena el **nombre oficial** de la entidad
+  tal cual (valor = etiqueta), o `'Prefiero no responder'`. Catálogo de 32 entidades en
+  `lib/catalogos.ts`. easyRasch (`/api/export-rasch`) NO cambia; `entidad` solo va al CSV maestro.
+- **`curso_derecho_anio` (0004)**: entero 1940–2026 (2026 = año en curso, no se acepta futuro),
+  obligatorio solo si `cohorte='general_si_curso'`; en cualquier otro caso null (rechazado si se
+  envía). CHECK en la BD (0004) + validación en `submit-validation.ts`.
+- **Grado escolar**: el campo "Grado escolar" del mockup NO se implementa (se mantiene la
+  escolaridad de padre/madre para todos y la propia solo en general).

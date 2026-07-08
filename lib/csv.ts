@@ -41,9 +41,11 @@ export function construirCsvMaestro(respuestas: Respuesta[], instituciones: Inst
     'se_considera_afro',
     'nivel_educativo_padre',
     'nivel_educativo_madre',
+    'entidad',
     'nivel_educativo_propio',
     'ocupacion',
     'curso_derecho_detalle',
+    'curso_derecho_anio',
     'duracion_segundos',
     'user_agent',
   ];
@@ -69,9 +71,11 @@ export function construirCsvMaestro(respuestas: Respuesta[], instituciones: Inst
       r.se_considera_afro,
       r.nivel_educativo_padre,
       r.nivel_educativo_madre,
+      r.entidad,
       r.nivel_educativo_propio,
       r.ocupacion,
       r.curso_derecho_detalle,
+      r.curso_derecho_anio,
       r.duracion_segundos,
       r.user_agent,
     ];

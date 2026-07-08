@@ -48,6 +48,7 @@ const payloadEscolar = {
   se_considera_afro: 'no',
   nivel_educativo_padre: 'secundaria',
   nivel_educativo_madre: 'primaria',
+  entidad: 'Jalisco',
   items: itemsCero,
   duracion_segundos: 120,
 };
@@ -103,10 +104,12 @@ describe('POST /api/submit', () => {
     expect(fila.institucion_id).toBe(1);
     expect(fila.items).toEqual(itemsCero); // se guarda el crudo sin invertir
     expect(fila.user_agent).toBe('vitest');
+    expect(fila.entidad).toBe('Jalisco');
     // Campos exclusivos de general quedan null en escolar.
     expect(fila.ocupacion).toBeNull();
     expect(fila.nivel_educativo_propio).toBeNull();
     expect(fila.curso_derecho_detalle).toBeNull();
+    expect(fila.curso_derecho_anio).toBeNull();
   });
 
   it('201 para un payload general válido con campos propios', async () => {
@@ -124,18 +127,22 @@ describe('POST /api/submit', () => {
         se_considera_afro: 'no',
         nivel_educativo_padre: 'no_lo_se',
         nivel_educativo_madre: 'licenciatura',
+        entidad: 'Ciudad de México',
         nivel_educativo_propio: 'posgrado',
         ocupacion: 'Abogada',
-        curso_derecho_detalle: 'Derecho civil, universidad, 2010',
+        curso_derecho_detalle: 'Un diplomado en la universidad',
+        curso_derecho_anio: 2010,
         items: itemsCero,
       }),
     );
     expect(res.status).toBe(201);
     const fila = insert.mock.calls[0][0] as Record<string, unknown>;
     expect(fila.institucion_id).toBe(4);
+    expect(fila.entidad).toBe('Ciudad de México');
     expect(fila.nivel_educativo_propio).toBe('posgrado');
     expect(fila.ocupacion).toBe('Abogada');
-    expect(fila.curso_derecho_detalle).toBe('Derecho civil, universidad, 2010');
+    expect(fila.curso_derecho_detalle).toBe('Un diplomado en la universidad');
+    expect(fila.curso_derecho_anio).toBe(2010);
   });
 
   it('500 si la inserción en Supabase falla', async () => {

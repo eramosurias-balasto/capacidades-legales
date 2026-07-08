@@ -77,6 +77,9 @@ optimizada para celular. Guarda resultados en **Supabase (Postgres)** y expone u
 ## Stack / convenciones
 
 - Next.js 14+ App Router, TypeScript, Tailwind CSS. Diseño sobrio, barra de progreso.
+- **Encuesta pública (rediseño RU.L):** rutas `/encuesta` y `/gracias` bajo el grupo
+  `app/(publico)/` con su propio design system (tokens en `styles/ru/`, primitivas en
+  `components/encuesta/ds.tsx`). El dashboard NO comparte esos estilos. Ver DECISIONES.md D12.
 - Gráficas: Recharts. Sin servicios externos de analytics.
 - Variables de entorno: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `DASHBOARD_PASSWORD`,
   `SESSION_SECRET`, `NEXT_PUBLIC_APP_URL`.

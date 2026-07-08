@@ -1,0 +1,56 @@
+/* ------------------------------------------------------------------
+   RU.L — Spacing, radii, elevation, grid, motion
+   Generous air (Apple-scale whitespace). Corners are modest and sharp,
+   not pillowy. Shadow is restrained — used to lift the one object that
+   matters, not every card. Motion is precise: things draw and settle.
+------------------------------------------------------------------- */
+:root {
+  /* — Spacing scale (4px base) — */
+  --space-0:   0;
+  --space-1:   0.25rem;  /*  4 */
+  --space-2:   0.5rem;   /*  8 */
+  --space-3:   0.75rem;  /* 12 */
+  --space-4:   1rem;     /* 16 */
+  --space-5:   1.5rem;   /* 24 */
+  --space-6:   2rem;     /* 32 */
+  --space-7:   2.5rem;   /* 40 */
+  --space-8:   3rem;     /* 48 */
+  --space-9:   4rem;     /* 64 */
+  --space-10:  5.5rem;   /* 88  — section rhythm */
+  --space-11:  7rem;     /* 112 — page margins   */
+  --space-12:  9rem;     /* 144 — grand margins  */
+
+  /* — Rule weights — */
+  --rule-hair:   0.5px;
+  --rule-thin:   1px;    /* default hairline                     */
+  --rule-medium: 1.5px;
+  --rule-heavy:  6px;    /* the cobalt masthead bar — one per view */
+
+  /* — Radii — modest, restrained. Sharp before soft. — */
+  --radius-none: 0px;
+  --radius-sm:   6px;    /* buttons, inputs, chips               */
+  --radius-md:   10px;   /* cards, panels                        */
+  --radius-lg:   16px;   /* large surfaces / device panels       */
+  --radius-pill: 980px;  /* status capsules + hero CTA only       */
+
+  /* — Grid — */
+  --grid-columns:   12;         /* @kind other */
+  --grid-gutter:    var(--space-4);
+  --measure:        66ch;
+  --content-max:    1240px;
+  --page-margin:    var(--space-11);
+
+  /* — Elevation — restrained; warm-neutral, never blue except the halo — */
+  --shadow-none:  none;
+  --shadow-sm:    0 1px 2px rgba(10, 10, 10, 0.05);
+  --shadow-md:    0 4px 16px -6px rgba(10, 10, 10, 0.10);
+  --shadow-lg:    0 24px 60px -32px rgba(10, 10, 10, 0.22);
+  --shadow-halo:  0 26px 44px rgba(36, 64, 206, 0.22);  /* the signature ring only */
+
+  /* — Motion — precise; things draw and settle, nothing bounces hard — */
+  --ease:      cubic-bezier(0.4, 0.0, 0.2, 1);       /* @kind other */
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);       /* @kind other */ /* apple decel */
+  --dur-fast:  120ms;   /* @kind other */
+  --dur:       200ms;   /* @kind other */ /* the house speed */
+  --dur-slow:  400ms;   /* @kind other */ /* draws, arcs     */
+}

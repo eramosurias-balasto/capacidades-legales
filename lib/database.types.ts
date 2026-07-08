@@ -30,10 +30,14 @@ export interface Respuesta {
   nivel_educativo_padre: string | null;
   nivel_educativo_madre: string | null;
 
+  // Entidad federativa (migración 0004; obligatoria para todos).
+  entidad: string | null;
+
   // Solo flujo general (migración 0003):
   nivel_educativo_propio: string | null;
   ocupacion: string | null;
   curso_derecho_detalle: string | null;
+  curso_derecho_anio: number | null; // solo general_si_curso (migración 0004)
 
   items: ItemsCrudos;
 

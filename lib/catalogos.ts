@@ -44,6 +44,52 @@ export const NIVELES_EDUCATIVOS_PROPIO = [
 export const MAX_OCUPACION = 120;
 export const MAX_CURSO_DERECHO_DETALLE = 200;
 
+// --- Año de la última clase de Derecho (flujo general_si_curso) ---
+export const MIN_ANIO_DERECHO = 1940;
+export const MAX_ANIO_DERECHO = 2026; // año en curso: no se acepta futuro
+
+// --- Entidad federativa (obligatoria para todos; migración 0004) ---
+// Se almacena el nombre oficial tal cual (valor = etiqueta). "Prefiero no responder" es la
+// opción de no respuesta.
+export const ENTIDADES_MX = [
+  'Aguascalientes',
+  'Baja California',
+  'Baja California Sur',
+  'Campeche',
+  'Chiapas',
+  'Chihuahua',
+  'Ciudad de México',
+  'Coahuila',
+  'Colima',
+  'Durango',
+  'Estado de México',
+  'Guanajuato',
+  'Guerrero',
+  'Hidalgo',
+  'Jalisco',
+  'Michoacán',
+  'Morelos',
+  'Nayarit',
+  'Nuevo León',
+  'Oaxaca',
+  'Puebla',
+  'Querétaro',
+  'Quintana Roo',
+  'San Luis Potosí',
+  'Sinaloa',
+  'Sonora',
+  'Tabasco',
+  'Tamaulipas',
+  'Tlaxcala',
+  'Veracruz',
+  'Yucatán',
+  'Zacatecas',
+] as const;
+
+export const ENTIDAD_PREFIERO_NO = 'Prefiero no responder';
+/** Opciones del dropdown de entidad (32 entidades + no respuesta) y catálogo de validación. */
+export const ENTIDADES = [...ENTIDADES_MX, ENTIDAD_PREFIERO_NO] as const;
+
 // --- Etiquetas visibles (para la UI del flujo y encabezados legibles) ---
 export const ETIQUETAS_GENERO: Record<(typeof GENEROS)[number], string> = {
   mujer: 'Mujer',

@@ -12,8 +12,11 @@ import {
   SI_NO_PNR,
   NIVELES_EDUCATIVOS_PADRES,
   NIVELES_EDUCATIVOS_PROPIO,
+  ENTIDADES,
   MAX_OCUPACION,
   MAX_CURSO_DERECHO_DETALLE,
+  MIN_ANIO_DERECHO,
+  MAX_ANIO_DERECHO,
 } from './catalogos';
 
 export interface RespuestaLimpia {
@@ -25,9 +28,11 @@ export interface RespuestaLimpia {
   se_considera_afro: string;
   nivel_educativo_padre: string;
   nivel_educativo_madre: string;
+  entidad: string;
   nivel_educativo_propio: string | null;
   ocupacion: string | null;
   curso_derecho_detalle: string | null;
+  curso_derecho_anio: number | null;
   items: ItemsCrudos;
   duracion_segundos: number | null;
 }
@@ -95,6 +100,9 @@ export function validarSubmit(payload: unknown, tipo: TipoInstitucion): Resultad
     return err('nivel_educativo_madre fuera de catálogo');
   }
 
+  // Entidad federativa: obligatoria para todos los flujos (migración 0004).
+  if (!ENTIDADES.includes(p.entidad as never)) return err('entidad fuera de catálogo');
+
   // Cohorte según tipo (valores escolares solo escolar y viceversa).
   const permitidas = cohortesPermitidas(tipo);
   if (!permitidas.includes(p.cohorte as string)) {
@@ -106,6 +114,7 @@ export function validarSubmit(payload: unknown, tipo: TipoInstitucion): Resultad
   let nivel_educativo_propio: string | null = null;
   let ocupacion: string | null = null;
   let curso_derecho_detalle: string | null = null;
+  let curso_derecho_anio: number | null = null;
 
   if (tipo === 'general') {
     // Nivel educativo propio: obligatorio, catálogo sin 'no_lo_se'.
@@ -121,22 +130,31 @@ export function validarSubmit(payload: unknown, tipo: TipoInstitucion): Resultad
     }
     ocupacion = p.ocupacion.trim();
 
-    // Detalle del curso de Derecho: obligatorio solo si cohorte = general_si_curso.
+    // Detalle y año del curso de Derecho: obligatorios solo si cohorte = general_si_curso.
     if (cohorte === 'general_si_curso') {
       if (vacio(p.curso_derecho_detalle)) return err('curso_derecho_detalle es obligatorio si cursó Derecho');
       if (typeof p.curso_derecho_detalle !== 'string' || p.curso_derecho_detalle.trim().length > MAX_CURSO_DERECHO_DETALLE) {
         return err(`curso_derecho_detalle debe ser texto de máximo ${MAX_CURSO_DERECHO_DETALLE} caracteres`);
       }
       curso_derecho_detalle = p.curso_derecho_detalle.trim();
-    } else if (!vacio(p.curso_derecho_detalle)) {
-      // general_no_curso: no debe traer detalle.
-      return err('curso_derecho_detalle no aplica cuando no se cursó Derecho');
+
+      if (vacio(p.curso_derecho_anio)) return err('curso_derecho_anio es obligatorio si cursó Derecho');
+      const anio = Number(p.curso_derecho_anio);
+      if (!Number.isInteger(anio) || anio < MIN_ANIO_DERECHO || anio > MAX_ANIO_DERECHO) {
+        return err(`curso_derecho_anio debe ser un año entre ${MIN_ANIO_DERECHO} y ${MAX_ANIO_DERECHO}`);
+      }
+      curso_derecho_anio = anio;
+    } else {
+      // general_no_curso: no deben traer detalle ni año.
+      if (!vacio(p.curso_derecho_detalle)) return err('curso_derecho_detalle no aplica cuando no se cursó Derecho');
+      if (!vacio(p.curso_derecho_anio)) return err('curso_derecho_anio no aplica cuando no se cursó Derecho');
     }
   } else {
     // escolar: los campos exclusivos de general no deben venir.
     if (!vacio(p.nivel_educativo_propio)) return err('nivel_educativo_propio no aplica al flujo escolar');
     if (!vacio(p.ocupacion)) return err('ocupacion no aplica al flujo escolar');
     if (!vacio(p.curso_derecho_detalle)) return err('curso_derecho_detalle no aplica al flujo escolar');
+    if (!vacio(p.curso_derecho_anio)) return err('curso_derecho_anio no aplica al flujo escolar');
   }
 
   // Duración (metadato opcional).
@@ -159,9 +177,11 @@ export function validarSubmit(payload: unknown, tipo: TipoInstitucion): Resultad
       se_considera_afro: p.se_considera_afro as string,
       nivel_educativo_padre: p.nivel_educativo_padre as string,
       nivel_educativo_madre: p.nivel_educativo_madre as string,
+      entidad: p.entidad as string,
       nivel_educativo_propio,
       ocupacion,
       curso_derecho_detalle,
+      curso_derecho_anio,
       items,
       duracion_segundos,
     },

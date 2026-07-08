@@ -1,0 +1,78 @@
+/* ------------------------------------------------------------------
+   RU.L — Typography
+   One grotesque, large and tight, does the display and the interface.
+   Mono carries every number, folio and live readout. No serif.
+------------------------------------------------------------------- */
+:root {
+  /* — Families — */
+  --font-display: 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-text:    'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* — Weights — */
+  --fw-regular:   400;  /* @kind font */
+  --fw-medium:    500;  /* @kind font */
+  --fw-semibold:  600;  /* @kind font */
+  --fw-bold:      700;  /* @kind font */
+
+  /* — Display scale (grotesque, tight tracking) — */
+  --text-metric:  7.375rem;  /* 118 — the score, the hero figure  */
+  --text-hero:    3.625rem;  /* 58  — hero headline                */
+  --text-h1:      3rem;      /* 48                                 */
+  --text-h2:      2.125rem;  /* 34                                 */
+  --text-h3:      1.5rem;    /* 24                                 */
+  --text-h4:      1.25rem;   /* 20                                 */
+
+  /* — Text scale — */
+  --text-lead:    1.25rem;   /* 20 — standfirst                    */
+  --text-body:    1rem;      /* 16                                 */
+  --text-sm:      0.875rem;  /* 14                                 */
+  --text-xs:      0.8125rem; /* 13                                 */
+  --text-label:   0.6875rem; /* 11 — tracked small-cap label       */
+
+  /* — Mono scale — */
+  --text-mono:    0.875rem;  /* 14 — reference, chips, cells       */
+  --text-mono-sm: 0.75rem;   /* 12                                 */
+
+  /* — Line heights — */
+  --lh-tight:   1.0;    /* @kind other */ /* metrics, the score */
+  --lh-snug:    1.06;   /* @kind other */ /* display headlines  */
+  --lh-heading: 1.18;   /* @kind other */ /* sub-headings       */
+  --lh-normal:  1.5;    /* @kind other */ /* body               */
+  --lh-relaxed: 1.62;   /* @kind other */ /* long-form          */
+
+  /* — Tracking — */
+  --tracking-metric:  -0.05em;   /* the big number                */
+  --tracking-display: -0.035em;  /* hero / h1                     */
+  --tracking-tight:   -0.02em;   /* h2 / h3                       */
+  --tracking-normal:  0em;
+  --tracking-label:   0.14em;    /* small-cap labels              */
+  --tracking-mono:    0.01em;
+}
+
+/* ---- Optional utility classes ---- */
+.rul-metric { font-family: var(--font-mono); font-weight: var(--fw-semibold);
+  font-size: var(--text-metric); line-height: var(--lh-tight); letter-spacing: var(--tracking-metric);
+  color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.rul-hero { font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: var(--text-hero); line-height: var(--lh-snug); letter-spacing: var(--tracking-display);
+  color: var(--text-primary); }
+.rul-h1 { font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: var(--text-h1); line-height: var(--lh-snug); letter-spacing: var(--tracking-display);
+  color: var(--text-primary); }
+.rul-h2 { font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: var(--text-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-tight);
+  color: var(--text-primary); }
+.rul-h3 { font-family: var(--font-display); font-weight: var(--fw-semibold);
+  font-size: var(--text-h3); line-height: var(--lh-heading); letter-spacing: var(--tracking-tight);
+  color: var(--text-primary); }
+.rul-lead { font-family: var(--font-text); font-weight: var(--fw-regular);
+  font-size: var(--text-lead); line-height: var(--lh-relaxed); color: var(--text-secondary); }
+.rul-body { font-family: var(--font-text); font-weight: var(--fw-regular);
+  font-size: var(--text-body); line-height: var(--lh-normal); color: var(--text-body); }
+.rul-label { font-family: var(--font-text); font-weight: var(--fw-semibold);
+  font-size: var(--text-label); line-height: 1; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; color: var(--text-muted); }
+.rul-mono { font-family: var(--font-mono); font-weight: var(--fw-regular);
+  font-size: var(--text-mono); letter-spacing: var(--tracking-mono); color: var(--text-body);
+  font-variant-numeric: tabular-nums; }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EscalaId, ESCALAS, NUM_ITEMS, ORDEN_ESCALAS } from '@/lib/instrumento';
 import {
@@ -9,35 +9,49 @@ import {
   SI_NO_PNR,
   NIVELES_EDUCATIVOS_PADRES,
   NIVELES_EDUCATIVOS_PROPIO,
+  ENTIDADES,
   ETIQUETAS_GENERO,
   ETIQUETAS_SI_NO_PNR,
   ETIQUETAS_NIVEL_EDUCATIVO,
+  ETIQUETAS_COHORTE,
   MAX_OCUPACION,
   MAX_CURSO_DERECHO_DETALLE,
+  MIN_ANIO_DERECHO,
+  MAX_ANIO_DERECHO,
 } from '@/lib/catalogos';
 import {
-  BarraProgreso,
-  BotonesNav,
-  CampoNumero,
-  CampoTexto,
-  GrupoRadio,
-  MensajeError,
-  Opcion,
-  Pregunta,
-} from './ui';
-import { EscalaLikert } from './EscalaLikert';
+  Badge,
+  Button,
+  CampoLabel,
+  ChoiceOption,
+  Chip,
+  Eyebrow,
+  HeavyBar,
+  Input,
+  Masthead,
+  ProgressHairline,
+  SelectField,
+} from './ds';
 
-type Paso = 'aviso' | 'cohorte' | 'demografia' | EscalaId;
+// ————— tipos de paso —————
+type Paso =
+  | { kind: 'portada' }
+  | { kind: 'cohorte' }
+  | { kind: 'demografia' }
+  | { kind: 'intro'; escala: EscalaId; section: number }
+  | { kind: 'item'; escala: EscalaId; item: number; section: number; n: number };
 
 interface Datos {
   cohorte: string;
   curso_derecho_detalle: string;
+  curso_derecho_anio: string;
   edad: string;
   genero: string;
   se_considera_indigena: string;
   se_considera_afro: string;
   nivel_educativo_padre: string;
   nivel_educativo_madre: string;
+  entidad: string;
   nivel_educativo_propio: string;
   ocupacion: string;
   items: Record<EscalaId, (number | null)[]>;
@@ -49,26 +63,46 @@ function datosIniciales(): Datos {
   return {
     cohorte: '',
     curso_derecho_detalle: '',
+    curso_derecho_anio: '',
     edad: '',
     genero: '',
     se_considera_indigena: '',
     se_considera_afro: '',
     nivel_educativo_padre: '',
     nivel_educativo_madre: '',
+    entidad: '',
     nivel_educativo_propio: '',
     ocupacion: '',
     items,
   };
 }
 
-const opciones = (valores: readonly string[], etiquetas: Record<string, string>): Opcion[] =>
-  valores.map((v) => ({ valor: v, etiqueta: etiquetas[v] }));
+const opcionesSelect = (valores: readonly string[], etiquetas: Record<string, string>) =>
+  valores.map((v) => ({ valor: v, etiqueta: etiquetas[v] ?? v }));
+
+/** "Escala de ansiedad legal (EAL)" → "Ansiedad legal". */
+function nombreCorto(nombre: string): string {
+  const s = nombre.replace(/^Escala de\s+/i, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const columna: CSSProperties = { width: '100%', maxWidth: 600, margin: '0 auto', padding: '0 24px 64px' };
 
 export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }) {
   const router = useRouter();
   const flag = `encuesta_enviada_${slug}`;
 
-  const pasos = useMemo<Paso[]>(() => ['aviso', 'cohorte', 'demografia', ...ORDEN_ESCALAS], []);
+  const pasos = useMemo<Paso[]>(() => {
+    const s: Paso[] = [{ kind: 'portada' }, { kind: 'cohorte' }, { kind: 'demografia' }];
+    ORDEN_ESCALAS.forEach((e, k) => {
+      const section = 4 + k;
+      const n = NUM_ITEMS[e];
+      s.push({ kind: 'intro', escala: e, section });
+      for (let i = 0; i < n; i++) s.push({ kind: 'item', escala: e, item: i, section, n });
+    });
+    return s;
+  }, []);
+
   const [idx, setIdx] = useState(0);
   const [datos, setDatos] = useState<Datos>(datosIniciales);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +115,6 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
   }, [flag]);
 
   const set = <K extends keyof Datos>(k: K, v: Datos[K]) => setDatos((d) => ({ ...d, [k]: v }));
-
   const setItem = (escala: EscalaId, i: number, valor: number) =>
     setDatos((d) => {
       const arr = d.items[escala].slice();
@@ -90,60 +123,75 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
     });
 
   const paso = pasos[idx];
+  const esUltimo = idx === pasos.length - 1;
 
-  /** Devuelve un mensaje de error si el paso actual está incompleto, o null si es válido. */
-  function validarPaso(p: Paso): string | null {
-    if (p === 'cohorte') {
-      if (!datos.cohorte) return 'Selecciona una opción para continuar.';
+  // ————— progreso y etiqueta de sección —————
+  function pctDe(p: Paso): number {
+    switch (p.kind) {
+      case 'portada':
+        return 0;
+      case 'cohorte':
+        return (1 / 8) * 100;
+      case 'demografia':
+        return (2 / 8) * 100;
+      case 'intro':
+        return ((p.section - 1) / 8) * 100;
+      case 'item':
+        return ((p.section - 1 + (p.item + 1) / p.n) / 8) * 100;
+    }
+  }
+  function seccionDe(p: Paso): string {
+    switch (p.kind) {
+      case 'portada':
+        return '';
+      case 'cohorte':
+        return 'Sección 2 de 8';
+      case 'demografia':
+        return 'Sección 3 de 8';
+      default:
+        return `Sección ${p.section} de 8`;
+    }
+  }
+
+  // ————— validación por paso —————
+  function pasoValido(p: Paso): boolean {
+    if (p.kind === 'cohorte') {
+      if (!datos.cohorte) return false;
       if (tipo === 'general' && datos.cohorte === 'general_si_curso') {
-        if (!datos.curso_derecho_detalle.trim()) return 'Indica cuál clase de Derecho cursaste y cuándo.';
-        if (datos.curso_derecho_detalle.trim().length > MAX_CURSO_DERECHO_DETALLE)
-          return `El detalle no puede exceder ${MAX_CURSO_DERECHO_DETALLE} caracteres.`;
+        const detalleOk = datos.curso_derecho_detalle.trim().length > 0 && datos.curso_derecho_detalle.trim().length <= MAX_CURSO_DERECHO_DETALLE;
+        const anio = Number(datos.curso_derecho_anio);
+        const anioOk = Number.isInteger(anio) && anio >= MIN_ANIO_DERECHO && anio <= MAX_ANIO_DERECHO;
+        return detalleOk && anioOk;
       }
-      return null;
+      return true;
     }
-    if (p === 'demografia') {
+    if (p.kind === 'demografia') {
       const edad = Number(datos.edad);
-      if (!datos.edad || !Number.isInteger(edad) || edad < 12 || edad > 99)
-        return 'Escribe una edad válida (entre 12 y 99).';
-      if (!datos.genero) return 'Selecciona una opción de género.';
-      if (!datos.se_considera_indigena) return 'Responde la pregunta sobre pertenencia indígena.';
-      if (!datos.se_considera_afro) return 'Responde la pregunta sobre pertenencia afromexicana.';
-      if (!datos.nivel_educativo_padre) return 'Selecciona el nivel de estudios de tu padre.';
-      if (!datos.nivel_educativo_madre) return 'Selecciona el nivel de estudios de tu madre.';
+      if (!datos.edad || !Number.isInteger(edad) || edad < 12 || edad > 99) return false;
+      if (!datos.genero || !datos.se_considera_indigena || !datos.se_considera_afro) return false;
+      if (!datos.nivel_educativo_padre || !datos.nivel_educativo_madre || !datos.entidad) return false;
       if (tipo === 'general') {
-        if (!datos.nivel_educativo_propio) return 'Selecciona tu máximo nivel de estudios.';
-        if (!datos.ocupacion.trim()) return 'Escribe tu ocupación.';
-        if (datos.ocupacion.trim().length > MAX_OCUPACION)
-          return `La ocupación no puede exceder ${MAX_OCUPACION} caracteres.`;
+        if (!datos.nivel_educativo_propio) return false;
+        if (!datos.ocupacion.trim() || datos.ocupacion.trim().length > MAX_OCUPACION) return false;
       }
-      return null;
+      return true;
     }
-    if (p !== 'aviso') {
-      // paso de escala
-      if (datos.items[p].some((v) => v === null)) return 'Responde todos los ítems para continuar.';
-      return null;
-    }
-    return null;
+    if (p.kind === 'item') return datos.items[p.escala][p.item] !== null;
+    return true;
   }
 
   function avanzar() {
-    if (paso === 'aviso') {
-      inicioRef.current = Date.now(); // duración: desde aceptar el aviso
-      setError(null);
+    if (paso.kind === 'portada') {
+      inicioRef.current = Date.now();
       setIdx((i) => i + 1);
       return;
     }
-    const err = validarPaso(paso);
-    if (err) {
-      setError(err);
+    if (esUltimo) {
+      void enviar();
       return;
     }
-    setError(null);
-    if (idx < pasos.length - 1) setIdx((i) => i + 1);
-    else void enviar();
+    setIdx((i) => i + 1);
   }
-
   function retroceder() {
     setError(null);
     setIdx((i) => Math.max(0, i - 1));
@@ -165,15 +213,17 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
       se_considera_afro: datos.se_considera_afro,
       nivel_educativo_padre: datos.nivel_educativo_padre,
       nivel_educativo_madre: datos.nivel_educativo_madre,
+      entidad: datos.entidad,
       items,
-      duracion_segundos: inicioRef.current
-        ? Math.round((Date.now() - inicioRef.current) / 1000)
-        : null,
+      duracion_segundos: inicioRef.current ? Math.round((Date.now() - inicioRef.current) / 1000) : null,
     };
     if (tipo === 'general') {
       payload.nivel_educativo_propio = datos.nivel_educativo_propio;
       payload.ocupacion = datos.ocupacion.trim();
-      if (datos.cohorte === 'general_si_curso') payload.curso_derecho_detalle = datos.curso_derecho_detalle.trim();
+      if (datos.cohorte === 'general_si_curso') {
+        payload.curso_derecho_detalle = datos.curso_derecho_detalle.trim();
+        payload.curso_derecho_anio = Number(datos.curso_derecho_anio);
+      }
     }
 
     try {
@@ -186,219 +236,314 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
         try {
           window.localStorage.setItem(flag, '1');
         } catch {
-          /* localStorage puede fallar en modo restringido; no es crítico */
+          /* modo restringido: no crítico */
         }
-        router.push('/gracias');
+        const j = (await res.json().catch(() => ({}))) as { id?: string };
+        const folio = j.id ? j.id.replace(/-/g, '').slice(-6).toUpperCase() : '';
+        router.push(folio ? `/gracias?folio=${folio}` : '/gracias');
         return;
       }
       const j = (await res.json().catch(() => ({}))) as { error?: string };
-      setError(j.error ?? 'No se pudo enviar la encuesta. Intenta de nuevo.');
+      setError(j.error ?? 'No se pudo enviar la encuesta. Intente de nuevo.');
     } catch {
-      setError('Hubo un problema de conexión. Revisa tu internet e intenta de nuevo.');
+      setError('Hubo un problema de conexión. Revise su internet e intente de nuevo.');
     } finally {
       setEnviando(false);
     }
   }
 
-  if (yaEnviada) {
-    return (
-      <Marco>
-        <h1 className="mb-3 text-xl font-semibold">Ya registramos tu respuesta</h1>
-        <p className="text-slate-600">
-          Desde este dispositivo ya se envió una respuesta a esta encuesta. ¡Gracias por participar!
+  if (yaEnviada) return <YaEnviada />;
+
+  const ctaLabel =
+    paso.kind === 'portada'
+      ? 'Acepto y quiero continuar'
+      : paso.kind === 'intro'
+      ? 'Empezar la sección'
+      : esUltimo
+      ? 'Terminar'
+      : 'Continuar';
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Masthead sectionLabel={seccionDe(paso)} />
+      <ProgressHairline pct={pctDe(paso)} />
+
+      <div style={columna}>
+        {error ? (
+          <p role="alert" style={{ margin: '20px 0 0', padding: '12px 16px', borderRadius: 'var(--radius-sm)', background: 'var(--danger-bg)', color: 'var(--danger-ink)', fontSize: 'var(--text-sm)' }}>
+            {error}
+          </p>
+        ) : null}
+
+        {paso.kind === 'portada' ? <Portada /> : null}
+        {paso.kind === 'cohorte' ? <Cohorte tipo={tipo} datos={datos} set={set} /> : null}
+        {paso.kind === 'demografia' ? <Demografia tipo={tipo} datos={datos} set={set} /> : null}
+        {paso.kind === 'intro' ? <EscalaIntro escala={paso.escala} /> : null}
+        {paso.kind === 'item' ? (
+          <ItemLikert paso={paso} valor={datos.items[paso.escala][paso.item]} onSelect={(v) => setItem(paso.escala, paso.item, v)} />
+        ) : null}
+
+        {/* Navegación */}
+        {paso.kind === 'item' ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 32 }}>
+            <Button variant="ghost" size="md" onClick={retroceder}>
+              Atrás
+            </Button>
+            <div style={{ flex: 1 }}>
+              <Button variant="primary" size="lg" fullWidth disabled={!pasoValido(paso) || enviando} onClick={avanzar}>
+                {enviando ? 'Enviando…' : ctaLabel}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginTop: paso.kind === 'portada' ? 0 : 36 }}>
+            <Button variant="primary" size="lg" pill={paso.kind === 'portada'} fullWidth disabled={!pasoValido(paso) || enviando} onClick={avanzar}>
+              {enviando ? 'Enviando…' : ctaLabel}
+            </Button>
+            {paso.kind !== 'portada' && idx > 0 ? (
+              <div style={{ marginTop: 12 }}>
+                <Button variant="ghost" size="md" onClick={retroceder}>
+                  Atrás
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ————————————————————— Pantallas ————————————————————— */
+
+function Portada() {
+  return (
+    <section className="ru-fade" style={{ paddingTop: 56 }}>
+      <HeavyBar />
+      <Eyebrow>Estudio académico · tesina de Derecho</Eyebrow>
+      <h1
+        className="ru-balance"
+        style={{
+          margin: '20px 0 0',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 'var(--fw-semibold)',
+          fontSize: 'var(--text-h1)',
+          lineHeight: 'var(--lh-snug)',
+          letterSpacing: 'var(--tracking-display)',
+          color: 'var(--text-primary)',
+        }}
+      >
+        ¿Qué tan capaz se siente de enfrentar un problema legal serio por su cuenta?
+      </h1>
+      <p style={{ margin: '24px 0 0', fontSize: 'var(--text-lead)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '44ch' }}>
+        Un despido injusto, una deuda que no reconoce, el despojo de una vivienda. Este estudio mide qué tan preparadas se sienten las personas para
+        afrontar problemas legales como estos, y dónde el acceso a la justicia se queda corto.
+      </p>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', margin: '32px 0' }}>
+        <Badge tone="neutral">5–7 minutos</Badge>
+        <Badge tone="accent" dot>
+          anónimo
+        </Badge>
+      </div>
+
+      <div style={{ borderTop: 'var(--rule-thin) solid var(--border-default)', paddingTop: 24 }}>
+        <p style={{ margin: '0 0 20px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '48ch' }}>
+          Al continuar acepta el{' '}
+          {/* TODO: URL pendiente del aviso de privacidad completo */}
+          <a href="#aviso">aviso de privacidad</a> de este estudio. Sus respuestas son anónimas: no pedimos su nombre ni datos que permitan identificarle.
         </p>
-      </Marco>
-    );
-  }
-
-  const esUltimo = idx === pasos.length - 1;
-
-  return (
-    <Marco>
-      {paso !== 'aviso' ? <BarraProgreso actual={idx} total={pasos.length} /> : null}
-      <MensajeError>{error}</MensajeError>
-
-      {paso === 'aviso' ? <PantallaAviso /> : null}
-      {paso === 'cohorte' ? (
-        <PantallaCohorte tipo={tipo} datos={datos} set={set} />
-      ) : null}
-      {paso === 'demografia' ? <PantallaDemografia tipo={tipo} datos={datos} set={set} /> : null}
-      {paso !== 'aviso' && paso !== 'cohorte' && paso !== 'demografia' ? (
-        <EscalaLikert
-          escala={ESCALAS[paso]}
-          valores={datos.items[paso]}
-          onChange={(i, v) => setItem(paso, i, v)}
-        />
-      ) : null}
-
-      <BotonesNav
-        onAtras={idx > 0 ? retroceder : undefined}
-        onSiguiente={avanzar}
-        textoSiguiente={paso === 'aviso' ? 'Acepto y quiero continuar' : esUltimo ? 'Enviar' : 'Siguiente'}
-        ocupado={enviando}
-      />
-    </Marco>
+      </div>
+    </section>
   );
 }
 
-function Marco({ children }: { children: React.ReactNode }) {
+function Cohorte({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos; set: <K extends keyof Datos>(k: K, v: Datos[K]) => void }) {
+  const escolar = tipo === 'escolar';
+  const opciones = escolar
+    ? [
+        { valor: 'curso_primavera_2026', etiqueta: ETIQUETAS_COHORTE.curso_primavera_2026 },
+        { valor: 'cursara_otono_2026', etiqueta: ETIQUETAS_COHORTE.cursara_otono_2026 },
+      ]
+    : [
+        { valor: 'general_si_curso', etiqueta: 'Sí' },
+        { valor: 'general_no_curso', etiqueta: 'No' },
+      ];
+  const pregunta = escolar
+    ? '¿Cuál es su situación respecto a la materia de Derecho en su escuela?'
+    : '¿Alguna vez ha cursado una clase de Derecho?';
+  const ayuda = escolar ? '' : 'Cuenta cualquier curso, taller o formación sobre Derecho, dentro o fuera de la escuela.';
+
   return (
-    <main className="mx-auto min-h-screen w-full max-w-2xl px-4 py-8 sm:px-6">
-      <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-8">{children}</div>
-    </main>
+    <section className="ru-fade" style={{ paddingTop: 40 }}>
+      <Eyebrow>Contacto con el Derecho</Eyebrow>
+      <h2 className="ru-balance" style={tituloH2}>
+        {pregunta}
+      </h2>
+      {ayuda ? <p style={{ margin: '16px 0 28px', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>{ayuda}</p> : <div style={{ height: 24 }} />}
+
+      <div role="radiogroup" aria-label={pregunta} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {opciones.map((o) => (
+          <ChoiceOption key={o.valor} label={o.etiqueta} selected={datos.cohorte === o.valor} onSelect={() => set('cohorte', o.valor)} size="sm" />
+        ))}
+      </div>
+
+      {tipo === 'general' && datos.cohorte === 'general_si_curso' ? (
+        <div className="ru-fade" style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Input
+            label="¿Qué tipo de programa fue?"
+            value={datos.curso_derecho_detalle}
+            onChange={(v) => set('curso_derecho_detalle', v)}
+            maxLength={MAX_CURSO_DERECHO_DETALLE}
+            placeholder="Preparatoria, un diplomado, el trabajo…"
+            required
+          />
+          <div style={{ maxWidth: 200 }}>
+            <Input
+              label="¿En qué año terminó su última clase de Derecho?"
+              value={datos.curso_derecho_anio}
+              onChange={(v) => set('curso_derecho_anio', v)}
+              type="number"
+              mono
+              inputMode="numeric"
+              placeholder="2018"
+              required
+            />
+          </div>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
-function PantallaAviso() {
+function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos; set: <K extends keyof Datos>(k: K, v: Datos[K]) => void }) {
+  const niveles = opcionesSelect(NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO);
+  return (
+    <section className="ru-fade" style={{ paddingTop: 40 }}>
+      <Eyebrow>Sobre usted</Eyebrow>
+      <h2 style={tituloH2}>Unos datos generales</h2>
+      <p style={{ margin: '16px 0 32px', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '46ch' }}>
+        Sirven para describir a quienes participan. No permiten identificarle.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ maxWidth: 160 }}>
+          <Input label="Edad" value={datos.edad} onChange={(v) => set('edad', v)} type="number" mono inputMode="numeric" placeholder="16" required />
+        </div>
+
+        <GrupoChips label="Género" opciones={opcionesSelect(GENEROS, ETIQUETAS_GENERO)} valor={datos.genero} onChange={(v) => set('genero', v)} />
+        <GrupoChips label="¿Se considera una persona indígena?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_indigena} onChange={(v) => set('se_considera_indigena', v)} />
+        <GrupoChips label="¿Se considera una persona afromexicana o afrodescendiente?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_afro} onChange={(v) => set('se_considera_afro', v)} />
+
+        {tipo === 'general' ? (
+          <SelectField label="Máximo nivel de estudios" value={datos.nivel_educativo_propio} onChange={(v) => set('nivel_educativo_propio', v)} options={opcionesSelect(NIVELES_EDUCATIVOS_PROPIO, ETIQUETAS_NIVEL_EDUCATIVO)} required />
+        ) : null}
+
+        <SelectField label="Máximo nivel de estudios del padre" value={datos.nivel_educativo_padre} onChange={(v) => set('nivel_educativo_padre', v)} options={niveles} required />
+        <SelectField label="Máximo nivel de estudios de la madre" value={datos.nivel_educativo_madre} onChange={(v) => set('nivel_educativo_madre', v)} options={niveles} required />
+        <SelectField label="Entidad federativa" value={datos.entidad} onChange={(v) => set('entidad', v)} options={ENTIDADES} required />
+
+        {tipo === 'general' ? (
+          <Input label="¿Cuál es su ocupación?" value={datos.ocupacion} onChange={(v) => set('ocupacion', v)} maxLength={MAX_OCUPACION} placeholder="Docente, comerciante, estudiante…" required />
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+function GrupoChips({ label, opciones, valor, onChange }: { label: string; opciones: { valor: string; etiqueta: string }[]; valor: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-slate-900">Aviso de privacidad</h1>
-      <div className="space-y-3 text-sm leading-relaxed text-slate-700">
-        <p>
-          Esta encuesta es <strong>anónima</strong> y tiene fines exclusivamente académicos (una
-          tesina de licenciatura en Derecho). No se recopilan datos que te identifiquen: ni tu
-          nombre, ni tu correo, ni tu teléfono.
+      <CampoLabel>{label}</CampoLabel>
+      <div role="radiogroup" aria-label={label} style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+        {opciones.map((o) => (
+          <Chip key={o.valor} label={o.etiqueta} selected={valor === o.valor} onSelect={() => onChange(o.valor)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EscalaIntro({ escala }: { escala: EscalaId }) {
+  const e = ESCALAS[escala];
+  const n = e.items.length;
+  return (
+    <section className="ru-fade" style={{ paddingTop: 44 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+        <Badge tone="accent">{nombreCorto(e.nombre)}</Badge>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>
+          {n} afirmaciones
+        </span>
+      </div>
+      <h2 style={{ ...tituloH2, fontSize: 'var(--text-h3)', margin: '0 0 8px' }}>Antes de empezar esta sección</h2>
+      <p style={{ margin: 0, fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-body)' }}>{e.instruccion}</p>
+      <div style={{ borderLeft: 'var(--rule-medium) solid var(--accent)', paddingLeft: 16, margin: '28px 0 0' }}>
+        <p style={{ margin: 0, fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
+          Verá una afirmación por pantalla. Elija en cada una la opción que mejor le describa; puede cambiar su respuesta antes de avanzar.
         </p>
-        <p>Tus respuestas se usarán únicamente de forma agregada para el análisis de la tesina.</p>
-        <p>
-          {/* TODO: URL pendiente del aviso de privacidad completo */}
-          <a href="#" className="font-medium text-slate-900 underline">
-            Aviso de privacidad
-          </a>
+      </div>
+    </section>
+  );
+}
+
+function ItemLikert({ paso, valor, onSelect }: { paso: { escala: EscalaId; item: number; n: number }; valor: number | null; onSelect: (v: number) => void }) {
+  const e = ESCALAS[paso.escala];
+  const texto = e.items[paso.item];
+  const meta = `Ítem ${paso.item + 1} de ${paso.n}`;
+  return (
+    <section style={{ paddingTop: 40 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 28 }}>
+        <Eyebrow>{nombreCorto(e.nombre)}</Eyebrow>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>{meta}</span>
+      </div>
+
+      <p
+        key={meta}
+        className="ru-fade ru-pretty"
+        style={{
+          margin: '0 0 32px',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 'var(--fw-medium)',
+          fontSize: 'var(--text-h3)',
+          lineHeight: 'var(--lh-heading)',
+          letterSpacing: 'var(--tracking-tight)',
+          color: 'var(--text-primary)',
+          minHeight: '2.6em',
+        }}
+      >
+        {texto}
+      </p>
+
+      <div role="radiogroup" aria-label={texto} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {e.categorias.map((c, i) => (
+          <ChoiceOption key={i} label={c} selected={valor === i} onSelect={() => onSelect(i)} size="lg" />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function YaEnviada() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Masthead sectionLabel="" />
+      <div style={{ ...columna, paddingTop: 72, textAlign: 'center' }}>
+        <HeavyBar center />
+        <h2 style={{ ...tituloH2, maxWidth: '22ch', margin: '0 auto' }}>Ya registramos su respuesta</h2>
+        <p style={{ margin: '20px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
+          Desde este dispositivo ya se envió una respuesta a esta encuesta. Gracias por su participación anónima.
         </p>
       </div>
     </div>
   );
 }
 
-function PantallaCohorte({
-  tipo,
-  datos,
-  set,
-}: {
-  tipo: TipoInstitucion;
-  datos: Datos;
-  set: <K extends keyof Datos>(k: K, v: Datos[K]) => void;
-}) {
-  if (tipo === 'general') {
-    return (
-      <>
-        <Pregunta titulo="¿Alguna vez has cursado alguna clase de Derecho?">
-          <GrupoRadio
-            name="cohorte"
-            valor={datos.cohorte}
-            onChange={(v) => set('cohorte', v)}
-            opciones={[
-              { valor: 'general_si_curso', etiqueta: 'Sí' },
-              { valor: 'general_no_curso', etiqueta: 'No' },
-            ]}
-          />
-        </Pregunta>
-        {datos.cohorte === 'general_si_curso' ? (
-          <Pregunta titulo="¿Cuál y cuándo? (por ejemplo: 'Derecho mercantil, en la universidad, 2015')">
-            <CampoTexto
-              id="curso_derecho_detalle"
-              valor={datos.curso_derecho_detalle}
-              onChange={(v) => set('curso_derecho_detalle', v)}
-              maxLength={MAX_CURSO_DERECHO_DETALLE}
-            />
-          </Pregunta>
-        ) : null}
-      </>
-    );
-  }
-  return (
-    <Pregunta titulo="¿Cuál es tu situación respecto a la materia de Derecho en tu escuela?">
-      <GrupoRadio
-        name="cohorte"
-        valor={datos.cohorte}
-        onChange={(v) => set('cohorte', v)}
-        opciones={[
-          { valor: 'curso_primavera_2026', etiqueta: 'La cursé en primavera 2026' },
-          { valor: 'cursara_otono_2026', etiqueta: 'La voy a cursar en otoño 2026' },
-        ]}
-      />
-    </Pregunta>
-  );
-}
-
-function PantallaDemografia({
-  tipo,
-  datos,
-  set,
-}: {
-  tipo: TipoInstitucion;
-  datos: Datos;
-  set: <K extends keyof Datos>(k: K, v: Datos[K]) => void;
-}) {
-  const nivelPadres = opciones(NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO);
-  return (
-    <div>
-      <Pregunta titulo="¿Cuántos años tienes?">
-        <CampoNumero id="edad" valor={datos.edad} onChange={(v) => set('edad', v)} min={12} max={99} placeholder="Edad" />
-      </Pregunta>
-
-      <Pregunta titulo="Género">
-        <GrupoRadio name="genero" valor={datos.genero} onChange={(v) => set('genero', v)} opciones={opciones(GENEROS, ETIQUETAS_GENERO)} />
-      </Pregunta>
-
-      <Pregunta titulo="¿Te consideras una persona indígena?">
-        <GrupoRadio
-          name="indigena"
-          valor={datos.se_considera_indigena}
-          onChange={(v) => set('se_considera_indigena', v)}
-          opciones={opciones(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)}
-        />
-      </Pregunta>
-
-      <Pregunta titulo="¿Te consideras una persona afromexicana o afrodescendiente?">
-        <GrupoRadio
-          name="afro"
-          valor={datos.se_considera_afro}
-          onChange={(v) => set('se_considera_afro', v)}
-          opciones={opciones(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)}
-        />
-      </Pregunta>
-
-      <Pregunta titulo="¿Cuál es el máximo nivel de estudios de tu padre?">
-        <GrupoRadio
-          name="nivel_padre"
-          valor={datos.nivel_educativo_padre}
-          onChange={(v) => set('nivel_educativo_padre', v)}
-          opciones={nivelPadres}
-        />
-      </Pregunta>
-
-      <Pregunta titulo="¿Cuál es el máximo nivel de estudios de tu madre?">
-        <GrupoRadio
-          name="nivel_madre"
-          valor={datos.nivel_educativo_madre}
-          onChange={(v) => set('nivel_educativo_madre', v)}
-          opciones={nivelPadres}
-        />
-      </Pregunta>
-
-      {tipo === 'general' ? (
-        <>
-          <Pregunta titulo="¿Cuál es tu máximo nivel de estudios?">
-            <GrupoRadio
-              name="nivel_propio"
-              valor={datos.nivel_educativo_propio}
-              onChange={(v) => set('nivel_educativo_propio', v)}
-              opciones={opciones(NIVELES_EDUCATIVOS_PROPIO, ETIQUETAS_NIVEL_EDUCATIVO)}
-            />
-          </Pregunta>
-          <Pregunta titulo="¿Cuál es tu ocupación?">
-            <CampoTexto
-              id="ocupacion"
-              valor={datos.ocupacion}
-              onChange={(v) => set('ocupacion', v)}
-              maxLength={MAX_OCUPACION}
-              placeholder="Por ejemplo: docente, comerciante, estudiante…"
-            />
-          </Pregunta>
-        </>
-      ) : null}
-    </div>
-  );
-}
+const tituloH2: CSSProperties = {
+  margin: 0,
+  fontFamily: 'var(--font-display)',
+  fontWeight: 'var(--fw-semibold)',
+  fontSize: 'var(--text-h2)',
+  lineHeight: 'var(--lh-heading)',
+  letterSpacing: 'var(--tracking-tight)',
+  color: 'var(--text-primary)',
+};

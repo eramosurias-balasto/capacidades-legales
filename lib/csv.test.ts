@@ -20,9 +20,11 @@ const respuesta: Respuesta = {
   se_considera_afro: 'no',
   nivel_educativo_padre: 'posgrado',
   nivel_educativo_madre: 'licenciatura',
+  entidad: 'Jalisco',
   nivel_educativo_propio: null,
   ocupacion: null,
   curso_derecho_detalle: null,
+  curso_derecho_anio: null,
   items: {
     eaj: [2, 2, 2, 3, 3, 3],
     eal: [0, 0, 1, 2],
@@ -59,6 +61,11 @@ describe('CSV maestro', () => {
     expect(f.institucion_slug).toBe('inst-a');
     expect(f.cohorte).toBe('curso_primavera_2026');
     expect(f.edad).toBe('17');
+  });
+
+  it('incluye las columnas nuevas entidad y curso_derecho_anio', () => {
+    expect(f.entidad).toBe('Jalisco');
+    expect(f.curso_derecho_anio).toBe(''); // null → vacío en escolar
   });
 
   it('reproduce las brutas y Rasch de la respuesta conocida', () => {

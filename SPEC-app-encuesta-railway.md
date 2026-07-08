@@ -79,10 +79,14 @@ create table respuestas (
   nivel_educativo_padre text,
   nivel_educativo_madre text,
 
+  -- entidad federativa (0004; obligatoria para todos): nombre oficial o 'Prefiero no responder'
+  entidad text,
+
   -- solo flujo general (0003):
   nivel_educativo_propio text,       -- catálogo de niveles SIN 'no_lo_se'
   ocupacion text,                    -- texto libre, máx. 120
   curso_derecho_detalle text,        -- máx. 200; obligatorio si cohorte='general_si_curso'
+  curso_derecho_anio int check (curso_derecho_anio between 1940 and 2026), -- 0004; obligatorio si general_si_curso
 
   -- respuestas item por item (enteros 0-3 según codificación de captura, SIN invertir)
   items jsonb not null,              -- {"eaj": [..6], "eal": [..4], "clg": [..6], "iaj": [..9], "dpj": [..6]}
@@ -113,15 +117,17 @@ Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítem
 1. **Aviso de privacidad.** Texto breve: encuesta anónima, fines académicos (tesina de licenciatura), sin datos identificables. Link al aviso de privacidad completo: usar `href="#"` con texto "Aviso de privacidad" y un comentario `// TODO: URL pendiente`. Botón único: **"Acepto y quiero continuar"**. Sin aceptar no hay encuesta.
 2. **Materia de Derecho (pantalla condicional según `tipo`).**
    - **`escolar`:** "¿Cuál es tu situación respecto a la materia de Derecho en tu escuela?" Opciones (radio): (a) "La cursé en primavera 2026" → `curso_primavera_2026`; (b) "La voy a cursar en otoño 2026" → `cursara_otono_2026`.
-   - **`general`:** "¿Alguna vez has cursado alguna clase de Derecho?" (radio Sí / No) → `general_si_curso` | `general_no_curso`. Si **Sí**, mostrar un campo de texto OBLIGATORIO "¿Cuál y cuándo? (por ejemplo: 'Derecho mercantil, en la universidad, 2015')" → `curso_derecho_detalle` (máx. 200 caracteres).
+   - **`general`:** "¿Alguna vez ha cursado una clase de Derecho?" (radio Sí / No) → `general_si_curso` | `general_no_curso`. Si **Sí**, se revelan DOS campos OBLIGATORIOS: (a) tipo de programa (texto libre, máx. 200) → `curso_derecho_detalle`; (b) año en que terminó su última clase de Derecho (entero 1940–2026, no futuro) → `curso_derecho_anio` (0004).
 3. **Demografía.**
    - Edad: campo numérico (12–99).
    - Género: Mujer / Hombre / Otro / Prefiero no responder.
    - "¿Te consideras una persona indígena?": Sí / No / Prefiero no responder.
    - "¿Te consideras una persona afromexicana o afrodescendiente?": Sí / No / Prefiero no responder.
-   - "¿Cuál es el máximo nivel de estudios de tu padre?" y "…de tu madre?" (mismas opciones, se preguntan a TODOS): Sin estudios / Primaria / Secundaria / Preparatoria o bachillerato / Licenciatura / Posgrado / No lo sé.
-   - **Solo `general`** (además de lo anterior): "¿Cuál es tu máximo nivel de estudios?" (mismo catálogo que padres pero SIN "No lo sé") → `nivel_educativo_propio`, obligatorio; y "¿Cuál es tu ocupación?" (texto libre, máx. 120, obligatorio) → `ocupacion`.
+   - "…máximo nivel de estudios del padre" y "…de la madre" como **dropdown** (mismas opciones, se preguntan a TODOS): Sin estudios / Primaria / Secundaria / Preparatoria o bachillerato / Licenciatura / Posgrado / No lo sé.
+   - **Entidad federativa** (dropdown, obligatoria para TODOS, 0004): las 32 entidades oficiales + "Prefiero no responder" → `entidad`.
+   - **Solo `general`** (además de lo anterior): "Máximo nivel de estudios" propio como **dropdown** (mismo catálogo que padres pero SIN "No lo sé") → `nivel_educativo_propio`, obligatorio; y "¿Cuál es su ocupación?" (texto libre, máx. 120, obligatorio) → `ocupacion`.
    - Las 5 escalas psicométricas son IDÉNTICAS en ambos flujos.
+   - **Presentación (RU.L Design System):** un ítem por pantalla con "Continuar"/"Atrás", progreso de 8 secciones con hairline animada (respeta `prefers-reduced-motion`), tokens cargados solo en las rutas públicas, registro **usted**. La pantalla de gracias muestra un folio anónimo (últimos 6 caracteres del uuid) en mono. Ver DECISIONES.md D12.
 4. **Escala EAJ** (6 ítems), 5. **Escala EAL** (4 ítems), 6. **Escala CLG** (6 ítems), 7. **Escala IAJ** (9 ítems), 8. **Escala DPJ** (6 ítems) — cada una con su instrucción introductoria y sus categorías de respuesta (sección 5). Presentar los ítems como matriz Likert en desktop y como tarjetas apiladas en móvil.
 9. **Envío y gracias.** Al enviar, POST a `/api/submit`. Registrar `duracion_segundos` (desde aceptar el aviso hasta enviar). Mostrar `/gracias`.
 
@@ -228,7 +234,7 @@ export const RASCH = {
 
 Validar en el servidor: longitudes exactas de cada arreglo de items, valores 0–3, cohorte y demografía dentro de catálogos, `acepto_aviso === true`, slug existente y activo. Rechazar con 400 si algo falla. Escribir tests unitarios de la puntuación (casos: todo 0, todo 3, y un caso mixto por escala verificado a mano, cubriendo las inversiones de IAJ ítem 5 y DPJ 3/6).
 
-**Validación condicional por `tipo`** (implementada en `lib/submit-validation.ts`, con tests): los valores de `cohorte` escolares (`curso_primavera_2026`, `cursara_otono_2026`) solo se aceptan para instituciones `escolar` y los generales (`general_si_curso`, `general_no_curso`) solo para `general`. `nivel_educativo_propio` (catálogo sin "No lo sé") y `ocupacion` (máx. 120) son obligatorios solo en `general`. `curso_derecho_detalle` (máx. 200) es obligatorio solo si `cohorte='general_si_curso'`; en cualquier otro caso debe venir vacío. La puntuación de las 5 escalas es idéntica en ambos flujos.
+**Validación condicional por `tipo`** (implementada en `lib/submit-validation.ts`, con tests): los valores de `cohorte` escolares (`curso_primavera_2026`, `cursara_otono_2026`) solo se aceptan para instituciones `escolar` y los generales (`general_si_curso`, `general_no_curso`) solo para `general`. `entidad` es obligatoria para TODOS (dentro del catálogo de 32 entidades + "Prefiero no responder"). `nivel_educativo_propio` (catálogo sin "No lo sé") y `ocupacion` (máx. 120) son obligatorios solo en `general`. `curso_derecho_detalle` (máx. 200) y `curso_derecho_anio` (entero 1940–2026) son obligatorios solo si `cohorte='general_si_curso'`; en cualquier otro caso deben venir vacíos. La puntuación de las 5 escalas es idéntica en ambos flujos.
 
 ## 7. Dashboard (`/dashboard`)
 
@@ -243,7 +249,7 @@ Contenido (con auto-refresh cada 60 s o botón "Actualizar"):
 3. **Nivel ítem:** distribución de respuestas por ítem (barras apiladas), útil para detectar ítems problemáticos.
 4. **Demografía:** tablas de frecuencia.
 5. **Exportación** (dos formatos):
-   - `/api/export`: CSV maestro, un renglón por respuesta con todos los campos, incluidos `tipo` (de la institución) y las 3 columnas de `general` (`nivel_educativo_propio`, `ocupacion`, `curso_derecho_detalle`), items crudos, puntajes por ítem recodificados, brutas y Rasch P&B.
+   - `/api/export`: CSV maestro, un renglón por respuesta con todos los campos, incluidos `tipo` (de la institución), `entidad`, `nivel_educativo_propio`, `ocupacion`, `curso_derecho_detalle` y `curso_derecho_anio`, items crudos, puntajes por ítem recodificados, brutas y Rasch P&B.
    - `/api/export-rasch?escala=<eaj|eal|clg|iaj|dpj>`: CSV por escala en el formato que espera el paquete easyRasch de R: un renglón por participante; primero las columnas de agrupación con prefijo `dif_` (`dif_tipo`, `dif_cohorte`, `dif_genero`, `dif_institucion`, `dif_edad`); después SOLO las columnas de ítems de esa escala, nombradas `q1…qN`, con el puntaje por ítem YA RECODIFICADO (inversiones de la sección 6 aplicadas; categoría mínima = 0). `dif_cohorte` ya trae los 4 valores; `dif_tipo` permite filtrar/separar escolar vs general en R. Botones de descarga en el dashboard para el maestro y para cada escala.
 
 Gráficas: Recharts. No usar servicios externos de analytics.

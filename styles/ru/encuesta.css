@@ -1,0 +1,80 @@
+/* Punto de entrada de estilos para las rutas públicas de la encuesta (RU.L Final Design
+   System). Se carga SOLO en app/(publico)/layout.tsx, así que estos tokens y reglas no
+   llegan al dashboard ni a otras rutas. Los @import van primero (requisito CSS). */
+@import './fonts.css';
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';
+
+/* Ámbito público: fondo blanco frío, tinta, tipografía Switzer. */
+.ru-publico {
+  background: var(--white);
+  color: var(--text-body);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+.ru-publico *,
+.ru-publico *::before,
+.ru-publico *::after {
+  box-sizing: border-box;
+}
+.ru-publico a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.ru-publico a:hover {
+  color: var(--accent-600);
+  text-decoration: underline;
+}
+
+/* Progreso: la hairline que se dibuja de 0 a 100 (el mecanismo visible). */
+.ru-prog-fill {
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+/* Balance/pretty de saltos de línea en titulares y afirmaciones. */
+.ru-balance {
+  text-wrap: balance;
+}
+.ru-pretty {
+  text-wrap: pretty;
+}
+
+/* Entradas de pantalla: dibujan y asientan. */
+.ru-fade {
+  animation: ruFade var(--dur-slow) var(--ease-out) both;
+}
+@keyframes ruFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Select estilizado con los tokens: foco cobalto, fondo blanco al enfocar. */
+.ru-select:focus {
+  border-color: var(--accent) !important;
+  background-color: var(--white) !important;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Foco visible por teclado en opciones/botones táctiles. */
+.ru-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* prefers-reduced-motion: sin dibujos ni desplazamientos. */
+@media (prefers-reduced-motion: reduce) {
+  .ru-prog-fill {
+    transition: none !important;
+  }
+  .ru-fade {
+    animation: none !important;
+  }
+}

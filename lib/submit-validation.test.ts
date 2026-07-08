@@ -10,7 +10,7 @@ const itemsOk = {
   dpj: [0, 1, 2, 3, 0, 1],
 };
 
-// Base demográfica común válida.
+// Base demográfica común válida (incluye entidad, obligatoria para todos).
 const demoComun = {
   acepto_aviso: true,
   edad: 17,
@@ -19,6 +19,7 @@ const demoComun = {
   se_considera_afro: 'prefiero_no_responder',
   nivel_educativo_padre: 'licenciatura',
   nivel_educativo_madre: 'no_lo_se',
+  entidad: 'Jalisco',
   items: itemsOk,
 };
 
@@ -31,7 +32,8 @@ function general(extra: Record<string, unknown> = {}) {
     cohorte: 'general_si_curso',
     nivel_educativo_propio: 'licenciatura',
     ocupacion: 'Abogada',
-    curso_derecho_detalle: 'Derecho mercantil, en la universidad, 2015',
+    curso_derecho_detalle: 'Un diplomado en la universidad',
+    curso_derecho_anio: 2015,
     ...extra,
   };
 }
@@ -57,6 +59,7 @@ describe('escolar', () => {
     expect(validarSubmit(escolar({ ocupacion: 'Estudiante' }), 'escolar').ok).toBe(false);
     expect(validarSubmit(escolar({ nivel_educativo_propio: 'primaria' }), 'escolar').ok).toBe(false);
     expect(validarSubmit(escolar({ curso_derecho_detalle: 'algo' }), 'escolar').ok).toBe(false);
+    expect(validarSubmit(escolar({ curso_derecho_anio: 2010 }), 'escolar').ok).toBe(false);
   });
 });
 
@@ -68,17 +71,38 @@ describe('general', () => {
       expect(r.limpio.cohorte).toBe('general_si_curso');
       expect(r.limpio.nivel_educativo_propio).toBe('licenciatura');
       expect(r.limpio.ocupacion).toBe('Abogada');
-      expect(r.limpio.curso_derecho_detalle).toContain('Derecho mercantil');
+      expect(r.limpio.curso_derecho_detalle).toContain('diplomado');
+      expect(r.limpio.curso_derecho_anio).toBe(2015);
     }
   });
 
-  it('acepta general_no_curso sin detalle y lo deja null', () => {
+  it('acepta general_no_curso sin detalle ni año y los deja null', () => {
     const r = validarSubmit(
-      general({ cohorte: 'general_no_curso', curso_derecho_detalle: undefined }),
+      general({ cohorte: 'general_no_curso', curso_derecho_detalle: undefined, curso_derecho_anio: undefined }),
       'general',
     );
     expect(r.ok).toBe(true);
-    if (r.ok) expect(r.limpio.curso_derecho_detalle).toBeNull();
+    if (r.ok) {
+      expect(r.limpio.curso_derecho_detalle).toBeNull();
+      expect(r.limpio.curso_derecho_anio).toBeNull();
+    }
+  });
+
+  it('exige curso_derecho_anio si cursó Derecho y valida el rango 1940–2026', () => {
+    expect(validarSubmit(general({ curso_derecho_anio: undefined }), 'general').ok).toBe(false);
+    expect(validarSubmit(general({ curso_derecho_anio: 1939 }), 'general').ok).toBe(false);
+    expect(validarSubmit(general({ curso_derecho_anio: 2027 }), 'general').ok).toBe(false); // futuro
+    expect(validarSubmit(general({ curso_derecho_anio: 2000.5 }), 'general').ok).toBe(false);
+    expect(validarSubmit(general({ curso_derecho_anio: 1940 }), 'general').ok).toBe(true);
+    expect(validarSubmit(general({ curso_derecho_anio: 2026 }), 'general').ok).toBe(true);
+  });
+
+  it('rechaza año cuando NO cursó Derecho', () => {
+    const r = validarSubmit(
+      general({ cohorte: 'general_no_curso', curso_derecho_detalle: undefined, curso_derecho_anio: 2010 }),
+      'general',
+    );
+    expect(r.ok).toBe(false);
   });
 
   it('rechaza cohorte escolar en institución general', () => {
@@ -124,6 +148,14 @@ describe('validaciones comunes a ambos tipos', () => {
     expect(validarSubmit(escolar({ genero: 'x' }), 'escolar').ok).toBe(false);
     expect(validarSubmit(escolar({ se_considera_indigena: 'quizas' }), 'escolar').ok).toBe(false);
     expect(validarSubmit(escolar({ nivel_educativo_madre: 'doctorado' }), 'escolar').ok).toBe(false);
+  });
+
+  it('exige entidad dentro de catálogo para ambos tipos', () => {
+    expect(validarSubmit(escolar({ entidad: undefined }), 'escolar').ok).toBe(false);
+    expect(validarSubmit(escolar({ entidad: 'Narnia' }), 'escolar').ok).toBe(false);
+    expect(validarSubmit(escolar({ entidad: 'Ciudad de México' }), 'escolar').ok).toBe(true);
+    expect(validarSubmit(general({ entidad: undefined }), 'general').ok).toBe(false);
+    expect(validarSubmit(escolar({ entidad: 'Prefiero no responder' }), 'escolar').ok).toBe(true);
   });
   it('rechaza items con longitud o valores inválidos', () => {
     expect(validarSubmit(escolar({ items: { ...itemsOk, iaj: [0, 1, 2] } }), 'escolar').ok).toBe(false);
