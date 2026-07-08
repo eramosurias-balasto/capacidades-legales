@@ -38,6 +38,12 @@ desacuerdo=0. Consecuencias asumidas:
   mientras el resto {0,1,2,3}. Cumple "mínimo = 0". El análisis PCM en R debe tratarlo
   así; se documentará en `analisis-r/`. No se altera la app.
 
+Nota: el colapso de categorías del ítem 5 de IAJ es una **decisión de puntuación de P&B**
+(cómo se calcula la bruta), no una limitación de captura. La **captura cruda 0–3 se
+conserva** en `items` y se exporta en el CSV maestro (`/api/export`), de modo que la
+calibración mexicana pueda analizar el funcionamiento de las 4 categorías originales del
+ítem sin la pérdida que impone el colapso.
+
 ## D4 — Cohorte: solo dos opciones (sin "Otra situación")
 
 Se mantiene únicamente `curso_primavera_2026` y `cursara_otono_2026` (coincide con el
