@@ -103,6 +103,7 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
   const [enviando, setEnviando] = useState(false);
   const [yaEnviada, setYaEnviada] = useState(false);
   const inicioRef = useRef<number | null>(null);
+  const enviandoRef = useRef(false); // guard síncrono contra doble envío (doble tap)
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.localStorage.getItem(flag)) setYaEnviada(true);
@@ -192,6 +193,8 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
   }
 
   async function enviar() {
+    if (enviandoRef.current) return; // ya hay un envío en curso: evita duplicados por doble tap
+    enviandoRef.current = true;
     setEnviando(true);
     setError(null);
     const items = {} as Record<EscalaId, number[]>;
@@ -239,8 +242,10 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
       }
       const j = (await res.json().catch(() => ({}))) as { error?: string };
       setError(j.error ?? 'No se pudo enviar la encuesta. Intente de nuevo.');
+      enviandoRef.current = false; // permite reintentar tras un error
     } catch {
       setError('Hubo un problema de conexión. Revise su internet e intente de nuevo.');
+      enviandoRef.current = false;
     } finally {
       setEnviando(false);
     }
