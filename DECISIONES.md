@@ -46,10 +46,12 @@ calibración mexicana pueda analizar el funcionamiento de las 4 categorías orig
 
 ## D4 — Cohorte: solo dos opciones (sin "Otra situación")
 
-Se mantiene únicamente `curso_primavera_2026` y `cursara_otono_2026` (coincide con el
-`check` de la tabla `respuestas`). No se agrega tercera opción por ahora (§11 lo deja a
-decisión del autor). Si se agrega después: actualizar el `check`, el catálogo de
-validación y la UI; no afecta scoring ni tablas Rasch.
+Se mantiene únicamente `curso_primavera_2026` y `cursara_otono_2026` para el flujo
+**escolar** (no se agrega "Otra situación"; §11 lo deja a decisión del autor). La
+migración 0003 extiende el `check` de `cohorte` con dos valores adicionales para el flujo
+**general** (`general_si_curso`, `general_no_curso`) — ver D10. Si se agrega una tercera
+opción escolar después: actualizar el `check`, `lib/catalogos.ts` y la UI; no afecta
+scoring ni tablas Rasch.
 
 ## D5 — Catálogos canónicos de demografía (valores almacenados)
 
@@ -86,3 +88,31 @@ bloquea el desarrollo.
 
 Se implementa el texto tal cual (mezcla usted/tú del instrumento). Decisión metodológica
 del autor ya tomada en §11 del SPEC; el código no la "corrige".
+
+## D10 — Link "general" para público adulto (muestra de conveniencia)
+
+La migración 0003 agrega una cuarta "institución" (`slug='general'`, `tipo='general'`) que
+reutiliza el MISMO instrumento y esquema para aplicar la encuesta a público adulto.
+
+**Nota metodológica:** la muestra general es de **conveniencia** (no probabilística, no
+representativa). Se **analiza SIEMPRE por separado** de la muestra escolar y no se agregan
+juntas en ningún estadístico ni gráfica del dashboard. Su propósito es doble: (a) **piloto**
+del instrumento adaptado (detectar ítems problemáticos, categorías mal usadas, targeting)
+con adultos antes/junto a la aplicación escolar, y (b) un punto de comparación exploratorio.
+En la tesina se reporta con esa etiqueta; el análisis Rasch en R usa `dif_tipo` para
+separar/estudiar DIF entre poblaciones. Las 5 escalas y su puntuación (§6) son idénticas.
+
+## D11 — Campos y catálogos del flujo general
+
+- `cohorte` general: `general_si_curso` | `general_no_curso` (¿ha cursado alguna clase de
+  Derecho?). Reemplaza la pantalla de cohorte escolar; no coexisten (D6/validación por tipo).
+- `nivel_educativo_propio`: mismo catálogo que padres **sin `no_lo_se`** (la persona conoce
+  su propio nivel). Obligatorio solo en general.
+- `ocupacion`: texto libre, máx. 120, obligatorio solo en general. Se acepta que puede traer
+  información potencialmente identificable si el usuario la escribe; se confía en la
+  instrucción de anonimato y no se intenta desanonimizar. (Si preocupa, el dashboard puede
+  omitir esta columna en vistas compartidas; el crudo se conserva para el análisis.)
+- `curso_derecho_detalle`: texto libre, máx. 200, obligatorio solo si `general_si_curso`.
+- `nivel_educativo_padre` y `nivel_educativo_madre` se preguntan a TODOS (escolar y general).
+- Valores canónicos y etiquetas viven en `lib/catalogos.ts`; la validación condicional en
+  `lib/submit-validation.ts` (con tests).

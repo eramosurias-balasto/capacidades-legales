@@ -2,6 +2,7 @@
 // supabase/migrations/0001_init.sql. `items` guarda el crudo de captura (índices 0–3).
 
 import type { EscalaId } from './instrumento';
+import type { Cohorte, TipoInstitucion } from './catalogos';
 
 /** Ítems crudos de captura: índice 0–3 por opción elegida, SIN invertir. */
 export type ItemsCrudos = Record<EscalaId, number[]>;
@@ -11,6 +12,7 @@ export interface Institucion {
   slug: string;
   nombre: string;
   activa: boolean;
+  tipo: TipoInstitucion; // 'escolar' | 'general' (migración 0003)
 }
 
 export interface Respuesta {
@@ -19,7 +21,7 @@ export interface Respuesta {
   creada_en: string;
 
   acepto_aviso: boolean;
-  cohorte: 'curso_primavera_2026' | 'cursara_otono_2026';
+  cohorte: Cohorte; // 4 valores (escolar/general) desde migración 0003
 
   edad: number | null;
   genero: string | null;
@@ -27,6 +29,11 @@ export interface Respuesta {
   se_considera_afro: string | null;
   nivel_educativo_padre: string | null;
   nivel_educativo_madre: string | null;
+
+  // Solo flujo general (migración 0003):
+  nivel_educativo_propio: string | null;
+  ocupacion: string | null;
+  curso_derecho_detalle: string | null;
 
   items: ItemsCrudos;
 

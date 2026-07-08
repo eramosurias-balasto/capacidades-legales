@@ -12,7 +12,10 @@ educación media superior de tres instituciones. La encuesta es anónima, en esp
 optimizada para celular. Guarda resultados en **Supabase (Postgres)** y expone un
 **dashboard protegido con contraseña** con análisis en tiempo real y exportación de CSV.
 
-- Un link por institución: `/encuesta/[slug]` identifica la procedencia.
+- Un link por institución: `/encuesta/[slug]` identifica la procedencia. Además hay un
+  cuarto link `/encuesta/general` para público adulto: `instituciones.tipo` (`escolar` |
+  `general`) ramifica el flujo, la validación y la separación en el dashboard. La muestra
+  general es de conveniencia y se analiza SIEMPRE por separado (ver DECISIONES.md D10/D11).
 - Cinco escalas psicométricas: **EAJ** (6 ítems), **EAL** (4), **CLG** (6), **IAJ** (9),
   **DPJ** (6).
 - La calibración Rasch con datos mexicanos NO ocurre en la app: se hace offline en R con
