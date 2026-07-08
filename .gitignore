@@ -1,0 +1,44 @@
+# dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+build/
+
+# producción
+dist/
+
+# entorno y secretos
+.env
+.env*.local
+.env.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# testing / cobertura
+coverage/
+
+# sistema operativo
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# análisis en R
+analisis-r/*.html
+analisis-r/*_files/
+.Rproj.user/
+.Rhistory
+.RData
+
+# datos exportados (no versionar respuestas reales)
+*.csv
