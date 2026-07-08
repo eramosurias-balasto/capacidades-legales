@@ -44,3 +44,5 @@ analisis-r/*_files/
 
 # datos exportados (no versionar respuestas reales)
 *.csv
+# excepción: los datos sintéticos de prueba del análisis R sí se versionan
+!analisis-r/datos_prueba/*.csv

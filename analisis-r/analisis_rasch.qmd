@@ -1,0 +1,280 @@
+---
+title: "Análisis Rasch — Capacidades legales (adaptación México)"
+subtitle: "Modelo de crédito parcial (PCM) · easyRasch"
+author: "Ernesto Ramos Urías — tesina de licenciatura en Derecho (ITAM)"
+date: today
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    code-fold: true
+    code-tools: true
+    embed-resources: true
+    theme: cosmo
+params:
+  escala: "eal"                               # eaj | eal | clg | iaj | dpj
+  csv_path: "datos_prueba/eal_sintetico.csv"  # CSV de /api/export-rasch?escala=<escala>
+  sim_iter: 200                               # iteraciones de simulación (usar >=400 en el análisis definitivo)
+execute:
+  warning: false
+  message: false
+---
+
+Este reporte corre el flujo estándar de análisis Rasch (modelo de crédito parcial, PCM,
+estimado por CML) con el paquete [easyRasch](https://github.com/pgmj/easyRasch), sobre el
+CSV que exporta `/api/export-rasch` de la app. Es un **insumo del anexo metodológico**: la
+calibración con datos mexicanos, comparable con las tablas de Pleasence & Balmer (2018).
+
+> **Cómo leer este documento.** Cada sección abre con una nota que explica qué pregunta
+> psicométrica responde y cómo interpretar su salida. El orden sigue el canónico de la
+> vignette oficial de easyRasch: datos → descriptivos → ajuste → dimensionalidad →
+> categorías → targeting/fiabilidad → DIF → conversión bruta→medida.
+
+```{r setup}
+# Paquetes. easyRasch envuelve eRm (CML), mirt, iarm, etc. Ver README para instalación.
+library(easyRasch)
+library(tidyverse)
+
+set.seed(1234)          # reproducibilidad de las simulaciones
+theme_set(theme_minimal())
+```
+
+# a. Datos, itemlabels y verificación
+
+*¿Qué responde?* Prepara el análisis: separa el dataframe que contiene SOLO los ítems (lo
+que el modelo Rasch calibra) de las variables de agrupación `dif_*`, arma `itemlabels`
+(número de ítem + texto literal del instrumento) y verifica la integridad de los datos con
+`RIcheckdata()` (rango de categorías, casos/ítems sin varianza, datos faltantes).
+
+```{r datos}
+# --- Textos de los ítems, tomados literalmente de lib/instrumento.ts (intocables) ---
+textos_items <- list(
+  eaj = c(
+    "Siempre consigo resolver problemas difíciles si me esfuerzo lo suficiente.",
+    "Si alguien se opone a mí, puedo encontrar los medios y las formas de conseguir lo que quiero.",
+    "Me resulta fácil mantenerme fiel a mis objetivos y alcanzarlos.",
+    "Puedo mantener la calma ante las dificultades porque confío en mi capacidad para afrontarlas.",
+    "Cuando me enfrento a un problema, suelo encontrar varias soluciones.",
+    "Soy bueno buscando información que ayude a resolver problemas."
+  ),
+  eal = c(
+    "Me da miedo hablar directamente con la gente para hacer valer mis derechos.",
+    "La preocupación por no expresarme con claridad puede impedirme actuar.",
+    "Evito hacer valer mis derechos porque no estoy seguro de que vaya a tener éxito.",
+    "No siempre consigo el mejor resultado para mí, porque intento evitar los conflictos."
+  ),
+  clg = c(
+    "El desacuerdo es considerable y la tensión es alta.",
+    "La otra parte dice que \"no descansará hasta que se haga justicia\".",
+    "La otra parte se niega a hablar contigo salvo a través de su abogado.",
+    "Una notificación del tribunal le indica que debe rellenar ciertos formularios, incluyendo la exposición de su caso.",
+    "El asunto llega a los tribunales, un abogado representa a la otra parte y usted está solo.",
+    "El tribunal dicta una sentencia en su contra, que usted considera injusta. Le informan de que tiene derecho a apelar."
+  ),
+  iaj = c(
+    "Cuestiones como estas suelen resolverse con rapidez y eficacia.",
+    "Las personas con menos recursos económicos suelen obtener un resultado peor.",
+    "En cuestiones como estas, la ley es como un juego en el que quienes son hábiles y tienen recursos tienen más probabilidades de conseguir lo que quieren.",
+    "Es fácil llevar cuestiones como estas a los tribunales si es necesario.",
+    "En cuestiones como estas, los abogados son demasiado caros para la mayoría de la gente.",
+    "El sistema judicial ofrece una buena relación calidad-precio.",
+    "En cuestiones como estas, personas como yo pueden permitirse la ayuda de un abogado.",
+    "Los abogados de los ricos no son mejores que los de los pobres.",
+    "Llevar un caso a los tribunales suele dar más problemas de lo que vale la pena."
+  ),
+  dpj = c(
+    "Las personas con menos dinero suelen obtener peores resultados.",
+    "En cuestiones como estas, la ley es como un juego en el que los más hábiles y con más recursos tienen más probabilidades de conseguir lo que quieren.",
+    "La ley siempre trata a ambas partes de forma justa, independientemente de su origen, género, etnia o religión.",
+    "Los jueces tienen sus propios intereses y agendas, al margen de la ley.",
+    "Las decisiones y acciones de los tribunales se ven influidas por la presión de la prensa y los políticos.",
+    "Los juzgados y tribunales siempre tratan a ambas partes de forma justa, independientemente de su origen, género, etnia o religión."
+  )
+)
+
+stopifnot(params$escala %in% names(textos_items))
+
+# --- Lectura del CSV de /api/export-rasch ---
+crudo <- readr::read_csv(params$csv_path, show_col_types = FALSE)
+
+# Ítems: SOLO las columnas q1..qN. Se reordenan por número por si vinieran desordenadas.
+items <- crudo |>
+  dplyr::select(dplyr::matches("^q[0-9]+$")) |>
+  as.data.frame()
+items <- items[, order(as.integer(sub("^q", "", names(items)))), drop = FALSE]
+
+# Variables de agrupación DIF (dif_*): categóricas como factor; edad numérica.
+dif <- crudo |>
+  dplyr::select(dplyr::starts_with("dif_")) |>
+  dplyr::mutate(dplyr::across(c(dif_tipo, dif_cohorte, dif_genero, dif_institucion), as.factor)) |>
+  as.data.frame()
+
+# itemlabels: itemnr (debe coincidir con los nombres de `items`) + texto del ítem.
+n_items <- ncol(items)
+stopifnot(n_items == length(textos_items[[params$escala]]))
+itemlabels <- data.frame(
+  itemnr = names(items),
+  item   = textos_items[[params$escala]],
+  stringsAsFactors = FALSE
+)
+itemlabels
+
+cat("N =", nrow(items), " · ítems =", n_items, " · escala =", toupper(params$escala), "\n")
+
+# Sanity check de easyRasch (categorías, varianza, faltantes).
+RIcheckdata(items)
+```
+
+# b. Descriptivos
+
+*¿Qué responde?* ¿Cómo se ven los datos antes de modelar? `RItileplot` muestra la frecuencia
+de cada categoría por ítem (colores desbalanceados = categorías poco usadas); `RIbarstack`
+apila las categorías por ítem; `RIrawdist` revela **efectos de piso/techo** (acumulación en
+el mínimo o el máximo, que comprimen la información); `RIdemographics` describe la
+composición de la muestra por cada variable `dif_*`.
+
+```{r descriptivos}
+RItileplot(items)
+RIbarstack(items)
+RIrawdist(items)
+
+RIdemographics(dif$dif_tipo, "Tipo de muestra")
+RIdemographics(dif$dif_cohorte, "Cohorte")
+RIdemographics(dif$dif_genero, "Género")
+RIdemographics(dif$dif_institucion, "Institución")
+```
+
+# c. Ajuste de los ítems (PCM)
+
+*¿Qué responde?* ¿Cada ítem encaja en el modelo? `RIitemfit` reporta infit/outfit MSQ
+condicional: valores cercanos a 1 indican buen ajuste; muy por encima de ~1.3 = ruido
+(ítem que no discrimina), muy por debajo de ~0.7 = redundancia. Los cortes se calibran por
+**simulación** con `RIgetfit` (no por reglas de dedo fijas). `RIrestscore` (item-restscore)
+comprueba que cada ítem correlacione con el resto de la escala.
+
+> Nota: se usa `RIitemfit()` con los cortes simulados; **no** `RIitemfitPCM()` (deprecado).
+
+```{r ajuste}
+# Cortes de infit/outfit por simulación (usar params$sim_iter >= 400 en el análisis real).
+simfit <- RIgetfit(items, iterations = params$sim_iter, cpu = 4)
+RIitemfit(items, simfit)
+
+# Correlación ítem–resto (discriminación).
+RIrestscore(items)
+```
+
+# d. Unidimensionalidad y dependencia local
+
+*¿Qué responde?* El modelo Rasch supone **un solo rasgo** y respuestas **localmente
+independientes**. `RIpcmPCA` corre un PCA de los residuales (un primer contraste con
+autovalor alto sugiere multidimensionalidad); `RIloadLoc` grafica las cargas contra la
+localización; `RIresidcorr` marca pares de ítems con correlación residual por encima de un
+corte **simulado** con `RIgetResidCor` (dependencia local: ítems que comparten algo más
+allá del rasgo, p. ej. redacción muy parecida).
+
+```{r dimensionalidad}
+RIpcmPCA(items)
+RIloadLoc(items)
+
+simcor <- RIgetResidCor(items, iterations = params$sim_iter, cpu = 4)
+RIresidcorr(items, cutoff = simcor$p995)
+```
+
+# e. Funcionamiento de las categorías de respuesta
+
+*¿Qué responde?* ¿Las 4 categorías (0–3) funcionan de forma ordenada? `RIitemCats` dibuja
+las curvas de probabilidad por categoría (cada categoría debería ser la más probable en
+algún tramo del rasgo). `RIitemHierarchy` muestra los **umbrales**: si aparecen **desordenados**
+(un umbral superior con menor localización que uno inferior) la categoría casi no se usa o
+está mal situada.
+
+> Clave para **IAJ ítem 5**: en la app ese ítem colapsa las dos categorías de desacuerdo
+> (recodificado 0/1/2, no 0/1/2/3). Aquí se verá con menos categorías efectivas y umbrales
+> potencialmente desordenados; es esperado y hay que reportarlo (ver DECISIONES.md D3).
+
+```{r categorias}
+RIitemCats(items, xlims = c(-5, 5))
+RIitemHierarchy(items)
+```
+
+# f. Targeting y fiabilidad
+
+*¿Qué responde?* ¿La dificultad de los ítems cae donde están las personas? `RItargeting`
+superpone la distribución de personas y la de umbrales de ítems (si los ítems son "muy
+fáciles" para la muestra, hay poca información en el extremo alto). `RIreliability` reporta
+la fiabilidad de la separación de personas (análoga al alfa, pero en la métrica del modelo).
+`RIpfit` detecta **personas** con patrones de respuesta improbables.
+
+> Nota: se usa `RIreliability()`; **no** `RItif()` (deprecado).
+
+```{r targeting}
+RItargeting(items)
+RIreliability(items)
+RIpfit(items)
+```
+
+# g. DIF — funcionamiento diferencial del ítem
+
+*¿Qué responde?* ¿Un ítem se comporta distinto entre grupos con el mismo nivel del rasgo
+(sesgo)? Primero `RIdifTileplot` (distribución de respuestas por grupo, para ver de un
+vistazo dónde podría haber DIF); luego `RIdifTable` cuantifica el DIF por cada variable.
+
+> **Advertencia de tamaño de muestra.** El DIF necesita **n suficiente por grupo** (como
+> regla práctica, ≳ 100–150 por categoría). Con pocas respuestas —o con celdas chicas en
+> género (`otro`, `prefiero_no_responder`) o institución— los resultados son inestables:
+> interprételos como exploratorios y considere colapsar u omitir grupos pequeños.
+
+```{r dif-cohorte}
+# DIF por cohorte (escolar: cursó vs. cursará · general: sí vs. no cursó Derecho).
+RIdifTileplot(items, dif$dif_cohorte)
+RIdifTable(items, dif$dif_cohorte)
+```
+
+```{r dif-genero}
+# DIF por género.
+RIdifTileplot(items, dif$dif_genero)
+RIdifTable(items, dif$dif_genero)
+```
+
+```{r dif-tipo}
+# DIF por tipo de muestra (escolar vs. general): sanidad del piloto general.
+RIdifTileplot(items, dif$dif_tipo)
+RIdifTable(items, dif$dif_tipo)
+```
+
+```{r dif-institucion}
+# DIF por institución (solo tiene sentido dentro de la muestra escolar; ver n por grupo).
+RIdifTileplot(items, dif$dif_institucion)
+RIdifTable(items, dif$dif_institucion)
+```
+
+```{r dif-edad}
+# La edad viene numérica en el CSV. El DIF requiere una variable de grupo: se parte por la
+# mediana como ejemplo (ajuste los cortes según su marco muestral).
+dif_edad_grupo <- factor(ifelse(dif$dif_edad <= median(dif$dif_edad, na.rm = TRUE), "menor", "mayor"))
+RIdifTable(items, dif_edad_grupo)
+```
+
+# h. Transformación bruta → medida (el producto estrella)
+
+*¿Qué responde?* Este es el entregable central para la tesina: la **tabla de conversión de
+puntuación bruta a medida de intervalo calibrada con datos mexicanos**, comparable con las
+tablas Rasch de Pleasence & Balmer (calibradas con Inglaterra y Gales). `RIitemparams`
+exporta los parámetros/umbrales de los ítems; `RIscoreSE` produce, para cada puntuación
+bruta posible, su medida en la métrica del rasgo con su error estándar.
+
+```{r conversion}
+# Parámetros de ítem (localización y umbrales) del PCM calibrado.
+RIitemparams(items)
+
+# Tabla puntuación bruta -> medida (con SE). Compárese con la tabla P&B de esta escala.
+RIscoreSE(items)
+```
+
+---
+
+*Reporte generado con easyRasch. Cite el paquete y los subyacentes con `citation("easyRasch")`,
+`citation("eRm")`, etc. Los nombres de función corresponden a la referencia oficial v0.5.1.1
+(<https://pgmj.github.io/easyRasch/reference/>).*
