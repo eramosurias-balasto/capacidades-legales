@@ -5,22 +5,15 @@ import { EscalaId, ESCALAS, ORDEN_ESCALAS } from '@/lib/instrumento';
 import type { DemografiaTipo, EscalaResumen, ResultadosDashboard } from '@/lib/dashboard-data';
 import { AvisoPrudencia, Card, Segmented, Select, StatCard, Tabs, TablaFrecuencia } from './ui';
 import { BarrasApiladasItem, BarrasComparacion, Histograma, LineaPorDia } from './charts';
+import { Inicio } from './Inicio';
+import { TABS, TAB_DEFAULT, type TabId } from './tabs';
 
 type Poblacion = 'escolar' | 'general';
-type TabId = 'resumen' | 'puntuaciones' | 'nivel-item' | 'demografia' | 'exportar';
-
-const TABS: { id: TabId; label: string }[] = [
-  { id: 'resumen', label: 'Resumen' },
-  { id: 'puntuaciones', label: 'Puntuaciones' },
-  { id: 'nivel-item', label: 'Nivel ítem' },
-  { id: 'demografia', label: 'Demografía' },
-  { id: 'exportar', label: 'Exportar' },
-];
 
 export function Dashboard() {
   const [datos, setDatos] = useState<ResultadosDashboard | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<TabId>('resumen');
+  const [tab, setTab] = useState<TabId>(TAB_DEFAULT);
   const [poblacion, setPoblacion] = useState<Poblacion>('escolar');
   const [escalaSel, setEscalaSel] = useState<EscalaId>('eaj');
   const [actualizado, setActualizado] = useState<string>('');
@@ -81,14 +74,18 @@ export function Dashboard() {
 
       <Tabs tabs={TABS} activo={tab} onChange={(t) => setTab(t as TabId)} />
 
-      {tab !== 'resumen' && tab !== 'exportar' ? (
+      {tab !== 'inicio' && tab !== 'resumen' && tab !== 'exportar' ? (
         <div className="mt-4 flex items-center gap-3">
           <span className="text-sm text-slate-500">Población:</span>
           <Segmented opciones={pobOpts} valor={poblacion} onChange={setPoblacion} />
         </div>
       ) : null}
 
-      {!datos ? (
+      {tab === 'inicio' ? (
+        <div className="mt-5">
+          <Inicio />
+        </div>
+      ) : !datos ? (
         <p className="mt-8 text-sm text-slate-400">Cargando datos…</p>
       ) : (
         <div className="mt-5">
