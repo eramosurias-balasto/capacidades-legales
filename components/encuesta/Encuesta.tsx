@@ -80,12 +80,6 @@ function datosIniciales(): Datos {
 const opcionesSelect = (valores: readonly string[], etiquetas: Record<string, string>) =>
   valores.map((v) => ({ valor: v, etiqueta: etiquetas[v] ?? v }));
 
-/** "Escala de ansiedad legal (EAL)" → "Ansiedad legal". */
-function nombreCorto(nombre: string): string {
-  const s = nombre.replace(/^Escala de\s+/i, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 const columna: CSSProperties = { width: '100%', maxWidth: 600, margin: '0 auto', padding: '0 24px 64px' };
 
 export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }) {
@@ -263,10 +257,19 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
       ? 'Terminar'
       : 'Continuar';
 
+  const pct = pctDe(paso);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Masthead sectionLabel={seccionDe(paso)} />
-      <ProgressHairline pct={pctDe(paso)} />
+      <ProgressHairline pct={pct} />
+      {paso.kind !== 'portada' ? (
+        <div style={{ width: '100%', maxWidth: 600, margin: '0 auto', padding: '6px 24px 0' }}>
+          <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+            {Math.round(pct)}% completado
+          </div>
+        </div>
+      ) : null}
 
       <div style={columna}>
         {error ? (
@@ -469,11 +472,9 @@ function EscalaIntro({ escala }: { escala: EscalaId }) {
   const n = e.items.length;
   return (
     <section className="ru-fade" style={{ paddingTop: 44 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
-        <Badge tone="accent">{nombreCorto(e.nombre)}</Badge>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>
-          {n} afirmaciones
-        </span>
+      {/* Sin nombre de escala en el cuestionario: podría sesgar las respuestas. */}
+      <div style={{ marginBottom: 24 }}>
+        <Badge tone="accent">{n} afirmaciones</Badge>
       </div>
       <h2 style={{ ...tituloH2, fontSize: 'var(--text-h3)', margin: '0 0 8px' }}>Antes de empezar esta sección</h2>
       <p style={{ margin: 0, fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-body)' }}>{e.instruccion}</p>
@@ -489,11 +490,11 @@ function EscalaIntro({ escala }: { escala: EscalaId }) {
 function ItemLikert({ paso, valor, onSelect }: { paso: { escala: EscalaId; item: number; n: number }; valor: number | null; onSelect: (v: number) => void }) {
   const e = ESCALAS[paso.escala];
   const texto = e.items[paso.item];
-  const meta = `Ítem ${paso.item + 1} de ${paso.n}`;
+  // Sin nombre de escala (evita sesgo). Solo el conteo neutral de afirmaciones.
+  const meta = `Afirmación ${paso.item + 1} de ${paso.n}`;
   return (
     <section style={{ paddingTop: 40 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 28 }}>
-        <Eyebrow>{nombreCorto(e.nombre)}</Eyebrow>
+      <div style={{ marginBottom: 28 }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>{meta}</span>
       </div>
 

@@ -45,6 +45,13 @@ export default function Gracias({ searchParams }: { searchParams: { folio?: stri
       <p style={{ margin: '20px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
         Gracias por su tiempo. Sus respuestas quedan guardadas de forma anónima y contribuyen a un estudio sobre el acceso a la justicia en México.
       </p>
+      <p style={{ margin: '24px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
+        ¿Le interesa consultar los resultados del estudio? Escríbame a{' '}
+        <a href="mailto:eramosurias@gmail.com" style={{ color: 'var(--accent)' }}>
+          eramosurias@gmail.com
+        </a>
+        .
+      </p>
       {folio ? <p style={{ margin: '28px auto 0', ...mono }}>registro anónimo · núm. {folio}</p> : null}
     </main>
   );
