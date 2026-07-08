@@ -26,7 +26,7 @@ export function getSupabaseAdmin(): SupabaseClient {
 export async function getInstitucionActiva(slug: string): Promise<Institucion | null> {
   const { data, error } = await getSupabaseAdmin()
     .from('instituciones')
-    .select('id, slug, nombre, activa')
+    .select('id, slug, nombre, activa, tipo')
     .eq('slug', slug)
     .eq('activa', true)
     .maybeSingle();
