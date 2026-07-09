@@ -142,6 +142,7 @@ export function Input({
   inputMode,
   id,
   required,
+  hint,
 }: {
   label?: string;
   value: string;
@@ -153,6 +154,7 @@ export function Input({
   inputMode?: 'numeric' | 'text';
   id?: string;
   required?: boolean;
+  hint?: string;
 }) {
   const [focus, setFocus] = useState(false);
   const autoId = useId();
@@ -194,6 +196,9 @@ export function Input({
           transition: 'border-color var(--dur) var(--ease), background var(--dur) var(--ease), box-shadow var(--dur) var(--ease)',
         }}
       />
+      {hint ? (
+        <p style={{ margin: 0, fontSize: 'var(--text-xs)', lineHeight: 'var(--lh-normal)', color: 'var(--text-muted)' }}>{hint}</p>
+      ) : null}
     </div>
   );
 }

@@ -78,11 +78,14 @@ Se guardan valores canónicos `snake_case` y se validan en el servidor. Etiqueta
 Se acepta que borrar localStorage o usar modo incógnito permite reenviar. Es el precio de
 NO recolectar IP/cookies de tracking ni PII (regla crítica 3). No se añade fingerprinting.
 
-## D8 — Slugs de institución placeholder
+## D8 — Slugs de institución (RESUELTO en migración 0005)
 
-Se mantiene el seed `inst-a/b/c` del SPEC. Los slugs definitivos (idealmente no
-adivinables, p. ej. `inst-a-x7k2`) los sustituye el usuario en la migración/seed; no
-bloquea el desarrollo.
+El seed inicial usó `inst-a/b/c` (0001). La migración **0005** los sustituye por slugs
+**no adivinables** `enc-XXXXXX` (parte aleatoria, sin caracteres ambiguos) y fija los nombres
+reales: `enc-2pit26` = Institución Privada, `enc-9cxazi` = Escuela Nacional Preparatoria,
+`enc-eekk8z` = Institución MCCEMS. `general` conserva slug y nombre. El código no hardcodea
+slugs escolares (resolución dinámica por `getInstitucionActiva`; anti-dup con la key
+`encuesta_enviada_<slug>`), así que basta el UPDATE.
 
 ## D9 — Tratamiento usted/tú
 
@@ -108,10 +111,10 @@ separar/estudiar DIF entre poblaciones. Las 5 escalas y su puntuación (§6) son
   Derecho?). Reemplaza la pantalla de cohorte escolar; no coexisten (D6/validación por tipo).
 - `nivel_educativo_propio`: mismo catálogo que padres **sin `no_lo_se`** (la persona conoce
   su propio nivel). Obligatorio solo en general.
-- `ocupacion`: texto libre, máx. 120, obligatorio solo en general. Se acepta que puede traer
-  información potencialmente identificable si el usuario la escribe; se confía en la
-  instrucción de anonimato y no se intenta desanonimizar. (Si preocupa, el dashboard puede
-  omitir esta columna en vistas compartidas; el crudo se conserva para el análisis.)
+- `ocupacion`: texto libre, máx. 120, obligatorio solo en general. Se **mantiene** como texto
+  libre en esquema y exports. Para mitigar el riesgo de PII se agregó microcopy bajo el campo:
+  "Por ejemplo: 'comerciante', 'contadora'. No incluya nombres ni datos personales." (más el
+  aviso de privacidad). Se confía en esa instrucción y no se intenta desanonimizar.
 - `curso_derecho_detalle`: texto libre, máx. 200, obligatorio solo si `general_si_curso`.
 - `nivel_educativo_padre` y `nivel_educativo_madre` se preguntan a TODOS (escolar y general).
 - Valores canónicos y etiquetas viven en `lib/catalogos.ts`; la validación condicional en

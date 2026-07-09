@@ -358,8 +358,7 @@ function Portada() {
       <div style={{ borderTop: 'var(--rule-thin) solid var(--border-default)', paddingTop: 24 }}>
         <p style={{ margin: '0 0 20px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '48ch' }}>
           Al continuar acepta el{' '}
-          {/* TODO: URL pendiente del aviso de privacidad completo */}
-          <a href="#aviso">aviso de privacidad</a> de este estudio. Sus respuestas son anónimas: no pedimos su nombre ni datos que permitan identificarle.
+          <a href="/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">aviso de privacidad</a> de este estudio. Sus respuestas son anónimas: no pedimos su nombre ni datos que permitan identificarle.
         </p>
       </div>
     </section>
@@ -452,7 +451,15 @@ function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos;
         <SelectField label="Entidad federativa" value={datos.entidad} onChange={(v) => set('entidad', v)} options={ENTIDADES} required />
 
         {tipo === 'general' ? (
-          <Input label="¿Cuál es su ocupación?" value={datos.ocupacion} onChange={(v) => set('ocupacion', v)} maxLength={MAX_OCUPACION} placeholder="Docente, comerciante, estudiante…" required />
+          <Input
+            label="¿Cuál es su ocupación?"
+            value={datos.ocupacion}
+            onChange={(v) => set('ocupacion', v)}
+            maxLength={MAX_OCUPACION}
+            placeholder="Docente, comerciante, estudiante…"
+            hint="Por ejemplo: 'comerciante', 'contadora'. No incluya nombres ni datos personales."
+            required
+          />
         ) : null}
       </div>
     </section>

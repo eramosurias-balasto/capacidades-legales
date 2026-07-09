@@ -10,9 +10,9 @@ begin;
 
 -- 1) Respuestas sintéticas (marcadas en user_agent para identificarlas).
 insert into respuestas (institucion_id, acepto_aviso, cohorte, items, user_agent) values
-  ((select id from instituciones where slug = 'inst-a' limit 1), true, 'curso_primavera_2026', '{"eaj":[0,0,0,0,0,0],"eal":[0,0,0,0],"clg":[0,0,0,0,0,0],"iaj":[0,0,0,0,0,0,0,0,0],"dpj":[0,0,0,0,0,0]}'::jsonb, 'VERIF_A'),
-  ((select id from instituciones where slug = 'inst-a' limit 1), true, 'curso_primavera_2026', '{"eaj":[3,3,3,3,3,3],"eal":[3,3,3,3],"clg":[3,3,3,3,3,3],"iaj":[3,3,3,3,3,3,3,3,3],"dpj":[3,3,3,3,3,3]}'::jsonb, 'VERIF_B'),
-  ((select id from instituciones where slug = 'inst-a' limit 1), true, 'curso_primavera_2026', '{"eaj":[0,1,2,3,0,1],"eal":[3,2,1,0],"clg":[0,1,2,3,0,1],"iaj":[0,1,2,3,0,1,2,3,0],"dpj":[0,3,3,0,3,0]}'::jsonb, 'VERIF_C');
+  ((select id from instituciones order by id limit 1), true, 'curso_primavera_2026', '{"eaj":[0,0,0,0,0,0],"eal":[0,0,0,0],"clg":[0,0,0,0,0,0],"iaj":[0,0,0,0,0,0,0,0,0],"dpj":[0,0,0,0,0,0]}'::jsonb, 'VERIF_A'),
+  ((select id from instituciones order by id limit 1), true, 'curso_primavera_2026', '{"eaj":[3,3,3,3,3,3],"eal":[3,3,3,3],"clg":[3,3,3,3,3,3],"iaj":[3,3,3,3,3,3,3,3,3],"dpj":[3,3,3,3,3,3]}'::jsonb, 'VERIF_B'),
+  ((select id from instituciones order by id limit 1), true, 'curso_primavera_2026', '{"eaj":[0,1,2,3,0,1],"eal":[3,2,1,0],"clg":[0,1,2,3,0,1],"iaj":[0,1,2,3,0,1,2,3,0],"dpj":[0,3,3,0,3,0]}'::jsonb, 'VERIF_C');
 
 -- 2) Valores esperados (caso, escala, num_item, valor_crudo, puntaje) desde lib/scoring.ts.
 create temp table esperado_recode (caso text, escala text, num_item int, valor_crudo int, puntaje int) on commit drop;
