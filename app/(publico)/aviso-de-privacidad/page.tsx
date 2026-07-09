@@ -3,10 +3,7 @@ import type { CSSProperties } from 'react';
 export const metadata = { title: 'Aviso de privacidad' };
 
 // Página pública del aviso de privacidad, con el design system RU.L de la encuesta.
-//
-// BORRADOR PENDIENTE DE REVISIÓN DEL AUTOR — el texto de abajo es un borrador simplificado.
-// El autor entregará la versión definitiva; solo se sustituye el contenido de las secciones,
-// sin tocar la estructura ni el estilo.
+// Texto definitivo entregado por el autor (última actualización: julio de 2026).
 
 const h2: CSSProperties = {
   margin: '32px 0 8px',
@@ -39,7 +36,7 @@ export default function AvisoDePrivacidad() {
           marginBottom: 16,
         }}
       >
-        Estudio de capacidades legales
+        Estudio sobre capacidades legales internas en México
       </div>
       <h1
         style={{
@@ -54,54 +51,68 @@ export default function AvisoDePrivacidad() {
       >
         Aviso de privacidad
       </h1>
-      <p style={{ ...p, margin: '12px 0 0', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>
-        borrador · pendiente de revisión del autor
-      </p>
 
-      {/* ↓↓↓ BORRADOR PENDIENTE DE REVISIÓN DEL AUTOR — sustituir por el texto definitivo ↓↓↓ */}
-
-      <h2 style={h2}>Responsable del estudio</h2>
+      <h2 style={h2}>Responsable</h2>
       <p style={p}>
-        Ernesto Ramos Urías, postulante a la licenciatura en Derecho por el Instituto Tecnológico Autónomo de México (ITAM), es el
-        responsable de este estudio y del tratamiento de las respuestas.
+        Este estudio forma parte de la tesina de licenciatura en Derecho de Ernesto Ramos Urías (Instituto Tecnológico Autónomo de
+        México). El autor es responsable del tratamiento de la información recolectada.
       </p>
 
       <h2 style={h2}>Finalidad</h2>
       <p style={p}>
-        Las respuestas se recaban con una finalidad exclusivamente académica: una tesina de licenciatura en Derecho que mide las
-        capacidades legales de la población. Los datos se usan únicamente de forma agregada para ese análisis.
+        La información se recolecta con fines exclusivamente académicos: medir capacidades legales internas mediante un instrumento
+        psicométrico adaptado al contexto mexicano, como parte de una investigación de titulación. Los resultados se analizarán y
+        publicarán únicamente de forma agregada.
       </p>
 
-      <h2 style={h2}>Datos que se recolectan</h2>
+      <h2 style={h2}>Qué se recolecta</h2>
       <p style={p}>
-        Se recolectan sus respuestas a las escalas de la encuesta y algunos datos demográficos generales (por ejemplo, edad, género,
-        entidad federativa y nivel de estudios), sin identificadores personales. Sirven solo para describir a quienes participan.
+        Sus respuestas al cuestionario y datos demográficos generales (edad, género, entidad federativa, escolaridad, entre otros). La
+        encuesta NO solicita ni almacena su nombre, correo electrónico, teléfono, dirección IP ni ningún otro dato que permita
+        identificarle. El enlace por el que accede indica únicamente la institución o grupo de procedencia.
       </p>
 
-      <h2 style={h2}>Carácter anónimo</h2>
+      <h2 style={h2}>Anonimato</h2>
       <p style={p}>
-        La encuesta es anónima. No se recolecta su nombre, correo electrónico, teléfono, dirección IP ni ningún otro identificador que
-        permita vincular las respuestas con usted.
+        Sus respuestas son anónimas desde el momento de su registro: no existe forma técnica de vincularlas con usted. Por la misma
+        razón, una vez enviadas no es posible localizarlas para modificarlas o eliminarlas de manera individual.
       </p>
 
       <h2 style={h2}>Campos de texto libre</h2>
       <p style={p}>
-        Algunas preguntas admiten texto libre (por ejemplo, la ocupación). Le pedimos <strong>no escribir su nombre ni datos
-        personales</strong> en esos campos, para conservar el anonimato de sus respuestas.
+        Algunas preguntas permiten escribir una respuesta propia. Le pedimos no incluir en ellas nombres, lugares de trabajo específicos
+        ni cualquier dato que pudiera identificarle a usted o a terceros.
       </p>
 
       <h2 style={h2}>Transferencias</h2>
       <p style={p}>
-        No se realizan transferencias de sus datos a terceros. Se conservan únicamente para el análisis de esta investigación.
+        La información no se venderá, compartirá ni transferirá a terceros. Se almacena en una base de datos con acceso restringido y se
+        utilizará únicamente para los fines académicos descritos.
+      </p>
+
+      <h2 style={h2}>Participación voluntaria</h2>
+      <p style={p}>
+        Responder esta encuesta es voluntario. Puede abandonarla en cualquier momento antes de enviarla, sin consecuencia alguna; en ese
+        caso, sus respuestas no quedan registradas.
       </p>
 
       <h2 style={h2}>Contacto</h2>
       <p style={p}>
-        Si tiene dudas sobre este aviso o sobre el estudio, puede escribir a{' '}
+        Para cualquier duda sobre este estudio o este aviso, puede escribir a{' '}
         <a href="mailto:eramosurias@gmail.com">eramosurias@gmail.com</a>.
       </p>
 
-      {/* ↑↑↑ FIN DEL BORRADOR PENDIENTE DE REVISIÓN DEL AUTOR ↑↑↑ */}
+      <p
+        style={{
+          margin: '40px 0 0',
+          fontFamily: 'var(--font-mono)',
+          fontSize: 'var(--text-mono-sm)',
+          letterSpacing: 'var(--tracking-mono)',
+          color: 'var(--text-muted)',
+        }}
+      >
+        Última actualización: julio de 2026.
+      </p>
     </main>
   );
 }
