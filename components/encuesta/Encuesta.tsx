@@ -482,6 +482,11 @@ function GrupoChips({ label, opciones, valor, onChange }: { label: string; opcio
 function EscalaIntro({ escala }: { escala: EscalaId }) {
   const e = ESCALAS[escala];
   const n = e.items.length;
+  // La instrucción se conserva íntegra y verbatim; solo se resalta EN NEGRITAS su oración-
+  // pregunta final (la parte más importante). Se parte en el último "¿" sin alterar el texto.
+  const idxPregunta = e.instruccion.lastIndexOf('¿');
+  const instrPrefijo = idxPregunta > 0 ? e.instruccion.slice(0, idxPregunta) : e.instruccion;
+  const instrPregunta = idxPregunta > 0 ? e.instruccion.slice(idxPregunta) : '';
   return (
     <section className="ru-fade" style={{ paddingTop: 44 }}>
       {/* Sin nombre de escala en el cuestionario: podría sesgar las respuestas. */}
@@ -489,7 +494,12 @@ function EscalaIntro({ escala }: { escala: EscalaId }) {
         <Badge tone="accent">{n} afirmaciones</Badge>
       </div>
       <h2 style={{ ...tituloH2, fontSize: 'var(--text-h3)', margin: '0 0 8px' }}>Antes de empezar esta sección</h2>
-      <p style={{ margin: 0, fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-body)' }}>{e.instruccion}</p>
+      <p style={{ margin: 0, fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-body)' }}>
+        {instrPrefijo}
+        {instrPregunta ? (
+          <strong style={{ fontWeight: 'var(--fw-semibold)', color: 'var(--text-primary)' }}>{instrPregunta}</strong>
+        ) : null}
+      </p>
       <div style={{ borderLeft: 'var(--rule-medium) solid var(--accent)', paddingLeft: 16, margin: '28px 0 0' }}>
         <p style={{ margin: 0, fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
           Verá una afirmación por pantalla. Elija en cada una la opción que mejor le describa; puede cambiar su respuesta antes de avanzar.
@@ -506,9 +516,15 @@ function ItemLikert({ paso, valor, onSelect }: { paso: { escala: EscalaId; item:
   const meta = `Afirmación ${paso.item + 1} de ${paso.n}`;
   return (
     <section style={{ paddingTop: 40 }}>
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 16 }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>{meta}</span>
       </div>
+
+      {/* Recordatorio persistente de la pregunta central (versión singular); la afirmación
+          sigue siendo la protagonista. Texto de UI de instrumento.ts (D13). */}
+      <p style={{ margin: '0 0 16px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
+        {e.preguntaCorta}
+      </p>
 
       <p
         key={meta}

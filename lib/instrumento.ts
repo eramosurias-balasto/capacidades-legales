@@ -2,6 +2,10 @@
 // REGLA CRÍTICA: los textos son un instrumento validado (P&B 2018). NO editar ni una letra.
 // La instrucción de DPJ se reconstruyó según DECISIONES.md D1 (verificada carácter por carácter).
 // Ver lib/instrumento.verify.test.ts, que revalida cada string contra el SPEC.
+//
+// `preguntaCorta` es el ÚNICO campo agregado a mano: texto de UI (recordatorio por ítem),
+// decisión de presentación del autor (DECISIONES.md D13). NO es parte del instrumento
+// validado y NO lo cubre el test de verificación.
 
 export type EscalaId = 'eaj' | 'eal' | 'clg' | 'iaj' | 'dpj';
 
@@ -12,6 +16,12 @@ export interface Escala {
   nombre: string;
   /** Instrucción introductoria, literal del instrumento. */
   instruccion: string;
+  /**
+   * Recordatorio de la pregunta central en versión SINGULAR, para mostrar arriba de cada
+   * ítem. Es TEXTO DE UI (decisión de presentación del autor, ver DECISIONES.md D13), NO
+   * forma parte del instrumento validado: no lo cubre instrumento.verify.test.ts.
+   */
+  preguntaCorta: string;
   /** Textos de los ítems, en orden. Literales del instrumento. */
   items: string[];
   /** Categorías de respuesta EN ORDEN DE CAPTURA (índice 0..3). */
@@ -34,6 +44,8 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eaj: {
     id: "eaj",
     nombre: "Escala de autoeficacia jurídica (EAJ)",
+    // UI: recordatorio singular por ítem (dice "problemas legales", no "jurídicos"; ver D13).
+    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida le describe la siguiente afirmación?",
     instruccion:
       "Piense en general en problemas jurídicos importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?",
     items: [
@@ -49,6 +61,7 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eal: {
     id: "eal",
     nombre: "Escala de ansiedad legal (EAL)",
+    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida le describe la siguiente afirmación?",
     instruccion:
       "Ahora, piense en general en problemas legales importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?",
     items: [
@@ -62,6 +75,8 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   clg: {
     id: "clg",
     nombre: "Escala de confianza jurídica general (CLG)",
+    preguntaCorta:
+      "Si se encontrara ante un problema legal importante, ¿qué grado de confianza tiene en que podría lograr un resultado justo y satisfactorio para usted en la siguiente situación?",
     instruccion:
       "Si se encontrara ante un conflicto legal importante —como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa económica como parte de un divorcio o enfrentarse al despojo de su vivienda—, ¿qué grado de confianza tiene en que podría lograr un resultado justo y satisfactorio para usted en las siguientes situaciones?",
     items: [
@@ -77,6 +92,8 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   iaj: {
     id: "iaj",
     nombre: "Escala de inaccesibilidad a la justicia (IAJ)",
+    preguntaCorta:
+      "Considere su impresión general y su experiencia con el sistema de justicia. ¿En qué medida está de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
       "Ahora, algunas preguntas sobre su impresión general y su experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como el despido injustificado por parte de su empleador, las lesiones sufridas como consecuencia de la negligencia de otra persona, las disputas económicas en el marco de un divorcio o el despojo de su vivienda. Teniendo en cuenta cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [
@@ -95,6 +112,8 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   dpj: {
     id: "dpj",
     nombre: "Escala de desigualdad percibida de la justicia (DPJ)",
+    preguntaCorta:
+      "Considere su impresión general y su experiencia con el sistema de justicia. ¿En qué medida está de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
       "Ahora, algunas preguntas sobre su impresión general y su experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como el despido injustificado por parte de su empleador, las lesiones sufridas como consecuencia de la negligencia de otra persona, las disputas económicas en el marco de un divorcio o el despojo de su vivienda. Pensando en cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [

@@ -146,3 +146,22 @@ Rediseño de las rutas **públicas** (`/encuesta`, `/gracias`) según el handoff
   envía). CHECK en la BD (0004) + validación en `submit-validation.ts`.
 - **Grado escolar**: el campo "Grado escolar" del mockup NO se implementa (se mantiene la
   escolaridad de padre/madre para todos y la propia solo en general).
+
+## D13 — Jerarquía de la pregunta central en la encuesta (decisión de presentación)
+
+Para que el encuestado no pierda de vista qué se le pregunta, se refuerza la pregunta central
+en dos lugares, SIN tocar el instrumento validado:
+
+- **Pantalla de intro de cada escala:** la instrucción del instrumento se muestra **íntegra y
+  verbatim**; solo se **resalta en negritas su oración-pregunta final** (se parte el string en
+  el último `¿`, sin alterar caracteres). Es puro estilo; el texto no cambia.
+- **Cada pantalla de ítem:** arriba de la afirmación se muestra un **recordatorio en versión
+  singular** de la pregunta central, en texto secundario (la afirmación sigue siendo la
+  protagonista). Estos recordatorios son **texto de UI**, viven en `lib/instrumento.ts` como el
+  campo nuevo `preguntaCorta` (uno por escala) y **no forman parte del instrumento**: no los
+  cubre `instrumento.verify.test.ts`, que sigue pasando sin cambios.
+
+**Nota literal:** la versión corta de **EAJ** dice "problemas **legales** importantes", mientras
+que la instrucción completa del instrumento dice "problemas **jurídicos** importantes". Es
+intencional (los recordatorios usan un registro uniforme "legal" en las cinco secciones); la
+instrucción validada de EAJ conserva "jurídicos" tal cual.

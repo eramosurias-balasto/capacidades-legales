@@ -5,13 +5,12 @@ import { Card } from './ui';
 // Vista "Inicio" del dashboard: texto de presentación del estudio (voz del autor, VERBATIM).
 // Sin gráficas. Detrás del login, como todo el dashboard.
 
-// Link interno a la encuesta general, con NEXT_PUBLIC_APP_URL si está definido; si no, ruta
-// relativa. Abre en pestaña nueva.
-const base = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
-const ENCUESTA_HREF = base ? `${base}/encuesta/general` : '/encuesta/general';
+// Link interno a la encuesta general en RUTA RELATIVA: no depende de NEXT_PUBLIC_APP_URL
+// (se rompía si la variable no estaba disponible en el build). Abre en pestaña nueva.
+const ENCUESTA_HREF = '/encuesta/general';
 
 const ESTUDIO_HREF =
-  'https://research.thelegaleducationfoundation.org/research-learning/funded-research/legal-confidence-and-attitudes-to-law-developing-standardised-measures';
+  'https://www.researchgate.net/publication/318652538_Legal_Confidence_Attitudes_to_Law_Developing_Standardised_Measures_of_Legal_Capability';
 
 const linkExterno = 'font-medium text-slate-900 underline hover:text-slate-700';
 

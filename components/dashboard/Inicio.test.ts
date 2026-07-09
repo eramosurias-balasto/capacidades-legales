@@ -22,7 +22,7 @@ describe('Dashboard: pestaña Inicio', () => {
 
   it('links externos abren en pestaña nueva con rel noopener', () => {
     expect(html).toContain('href="https://github.com/pgmj/easyRasch"');
-    expect(html).toContain('research.thelegaleducationfoundation.org');
+    expect(html).toContain('researchgate.net/publication/318652538');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
   });
