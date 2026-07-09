@@ -231,7 +231,14 @@ RIestThetasCATr <- function(data, itemParams, method = "WL", cpu = 4,
   }
 
   library(furrr) # should probably not be loaded inside the package?
-  plan(multisession, workers = cpu)
+  # PATCH LOCAL (Windows ARM): esta función es el único punto que usa future/furrr, y varias
+  # funciones la llaman internamente SIN pasar cpu (default cpu=4): p. ej. RIitemfit ->
+  # RIestThetasCATr(data). Hacemos que respete options(mc.cores) —que la plantilla fija a
+  # params$cpu— y que con 1 núcleo use un plan secuencial (future_map corre en el proceso
+  # principal, sin workers PSOCK que crashean bajo R x64 emulado). Con >1 núcleo, original.
+  cpu_efectivo <- min(cpu, getOption("mc.cores", cpu))
+  if (cpu_efectivo == 1) future::plan(future::sequential) else
+    future::plan(future::multisession, workers = cpu_efectivo)
   # define function to call from purrr::map_dbl later.
   estTheta <- function(personResponse, itemParameters = itemParams, rmod = model,
                        est = method, rtheta = theta_range) {

@@ -87,18 +87,38 @@ Así, con `cpu == 1` el bucle `%dopar%` corre **en el proceso principal** (donde
 funciones y objetos), sin abrir *workers*. **Con `cpu > 1` el comportamiento original se
 conserva** intacto (paralelismo con `registerDoParallel`).
 
+El paquete usa **dos** mecanismos de paralelismo, y ambos están cubiertos:
+
+- **`doParallel` + `%dopar%`** (con argumento `cpu`) → parche: `registerDoSEQ()` cuando `cpu == 1`.
+- **`future` + `furrr`** (`plan(multisession)` + `future_map`), centralizado en
+  `RIestThetasCATr()`. Varias funciones la llaman **internamente sin pasar `cpu`** (usan su
+  default `cpu = 4`): en la plantilla, `RIitemfit()` → `RIestThetasCATr(data)`. El parche hace
+  que respete `options(mc.cores)` —que la plantilla fija a `params$cpu`— y con 1 núcleo use
+  `future::plan(future::sequential)`:
+
+  ```r
+  # PATCH LOCAL (Windows ARM):
+  cpu_efectivo <- min(cpu, getOption("mc.cores", cpu))
+  if (cpu_efectivo == 1) future::plan(future::sequential) else
+    future::plan(future::multisession, workers = cpu_efectivo)
+  ```
+
 Archivos y funciones parchadas (buscar el comentario `# PATCH LOCAL (Windows ARM)`):
 
-| Archivo | Función |
-|---|---|
-| `easyRasch-main/R/easyRasch.R` | `RIgetfit()` |
-| `easyRasch-main/R/local_dependence.R` | `RIgetResidCor()` |
-| `easyRasch-main/R/reliabilityRMU.R` | `RIreliability()` (rama `boot = TRUE`) |
+| Archivo | Función | Mecanismo |
+|---|---|---|
+| `easyRasch-main/R/easyRasch.R` | `RIgetfit()` | doParallel |
+| `easyRasch-main/R/local_dependence.R` | `RIgetResidCor()` | doParallel |
+| `easyRasch-main/R/reliabilityRMU.R` | `RIreliability()` (rama `boot = TRUE`) | doParallel |
+| `easyRasch-main/R/person_parameters.R` | `RIestThetasCATr()` | future/furrr |
 
-No se tocó nada más del paquete. Las demás funciones con `%dopar%` (p. ej. `RIbootRestscore`,
-`RIbootPCA`) no las usa la plantilla; y cualquier `%dopar%` sin backend propio hereda el
-secuencial ya registrado. Si actualizas easyRasch a una versión nueva, vuelve a aplicar el
-parche (o corre con `cpu > 1` en una máquina no emulada).
+`RIestThetasCATr()` es el **único** punto del paquete que usa `future`/`furrr`; se alcanza
+(directa o indirectamente) desde las funciones de la plantilla `RIitemfit`, `RIgetfit` y
+`RIgetResidCor`, así que un solo parche ahí cubre todas las rutas. No se tocó nada más del
+paquete. Las demás funciones con `%dopar%` (p. ej. `RIbootRestscore`, `RIbootPCA`) no las usa
+la plantilla; y cualquier `%dopar%` sin backend propio hereda el secuencial ya registrado.
+Si actualizas easyRasch a una versión nueva, vuelve a aplicar los parches (o corre con
+`cpu > 1` en una máquina no emulada).
 
 ## 2. Cómo correr la plantilla (por escala)
 
