@@ -1,0 +1,53 @@
+Package: easyRasch
+Title: Psychometric Analysis in R with Rasch Measurement Theory
+Version: 0.5.1.1
+Date: 2026-04-01
+URL: https://github.com/pgmj/easyRasch, https://pgmj.github.io/easyRasch/
+Authors@R:
+    person("Magnus", "Johansson", , "pgmj@pm.me", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1669-592X"))
+Description: Multiple functions to simplify the Rasch analysis workflow. From
+    descriptive statistics to fit statistics, response category analysis,
+    DIF analysis, targeting, reliability, etc. Makes heavy use of existing
+    packages for Rasch analyses, such as eRm, iarm, mirt, and psychotree.
+Depends:
+    formattable,
+    kableExtra,
+    tidyverse,
+    eRm,
+    mirt,
+    psych,
+    ggplot2 (>= 3.4.0),
+    psychotree,
+    psychotools (>= 0.7-3),
+    matrixStats,
+    reshape,
+    patchwork,
+    ggrepel,
+    glue,
+    catR,
+    hexbin,
+    janitor,
+    ggdist,
+    foreach,
+    furrr,
+    doParallel,
+    Bayesrel,
+    rsample,
+    doRNG
+Imports:
+    iarm,
+    PerFit,
+    brms (>= 2.17.0),
+    dplyr,
+    tidyr,
+    tibble,
+    rlang,
+    stats
+VignetteBuilder:
+    quarto
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Config/Needs/website: rmarkdown

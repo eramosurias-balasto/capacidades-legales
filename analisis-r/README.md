@@ -8,6 +8,9 @@ tesina: la calibración con datos mexicanos, comparable con las tablas de Please
 - `analisis_rasch.qmd` — plantilla Quarto parametrizada por escala.
 - `datos_prueba/eal_sintetico.csv` — 200 filas sintéticas con el formato EXACTO de
   `/api/export-rasch?escala=eal`, para probar la plantilla sin datos reales.
+- `easyRasch-main/` — código fuente del paquete easyRasch v0.5.1.1 (GPL ≥ 3), incluido para
+  poder cargarlo con `pkgload::load_all()` sin instalarlo (ver §1.1). El sitio renderizado
+  (`docs/`) se excluye del repositorio por peso; no hace falta para el análisis.
 
 Modelo: **crédito parcial (PCM)**, estimado por **máxima verosimilitud condicional (CML)** vía
 `eRm` — el default del paquete. Nombres de función verificados contra la referencia oficial
@@ -35,6 +38,29 @@ v0.5.1.1 (<https://pgmj.github.io/easyRasch/reference/>); flujo canónico según
    ```
 
    Verifica: `library(easyRasch)` no debe dar error.
+
+### 1.1. Vía alternativa: cargar easyRasch desde la fuente (`load_all`)
+
+En algunas máquinas la **instalación** de easyRasch falla en el paso de *lazy loading*
+(`R CMD INSTALL` termina en error o silenciosamente), aunque el paquete es correcto. Para
+esos casos la plantilla **ya viene configurada** para cargar easyRasch desde su código fuente
+en `easyRasch-main/` con `pkgload`, sin instalarlo:
+
+```r
+install.packages("pkgload")   # una sola vez
+# (la plantilla llama internamente a:)
+pkgload::load_all("easyRasch-main", quiet = TRUE)
+```
+
+**Importante:** `load_all()` carga easyRasch, pero **sus dependencias sí deben estar
+instaladas** (eRm, mirt, iarm, psych, psychotree, psychotools, tidyverse, brms, catR,
+Bayesrel, furrr, doParallel, …). La forma más simple de instalarlas todas es correr el
+`pak::pkg_install("pgmj/easyRasch")` de arriba: aunque el *build* final de easyRasch falle,
+`pak` ya habrá instalado el árbol de dependencias; entonces la plantilla lo carga con
+`load_all()` desde la fuente.
+
+Si en cambio tienes easyRasch instalado y funcionando, abre `analisis_rasch.qmd` y sustituye
+la línea `pkgload::load_all(...)` por `library(easyRasch)` (ambas son válidas).
 
 ## 2. Cómo correr la plantilla (por escala)
 

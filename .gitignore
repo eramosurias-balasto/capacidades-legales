@@ -41,6 +41,9 @@ analisis-r/*_files/
 .Rproj.user/
 .Rhistory
 .RData
+# easyRasch se versiona como fuente (GPL-3) para reproducibilidad, pero NO su sitio
+# renderizado (pkgdown) ni artefactos pesados: no hacen falta para pkgload::load_all().
+analisis-r/easyRasch-main/docs/
 
 # datos exportados (no versionar respuestas reales)
 *.csv

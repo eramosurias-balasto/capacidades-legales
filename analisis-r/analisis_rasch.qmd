@@ -33,8 +33,13 @@ calibración con datos mexicanos, comparable con las tablas de Pleasence & Balme
 > categorías → targeting/fiabilidad → DIF → conversión bruta→medida.
 
 ```{r setup}
-# Paquetes. easyRasch envuelve eRm (CML), mirt, iarm, etc. Ver README para instalación.
-library(easyRasch)
+# easyRasch se carga desde la fuente vendida en easyRasch-main/ con pkgload::load_all().
+# Motivo: en algunas máquinas R CMD INSTALL falla en el "lazy loading" y library(easyRasch)
+# no funciona, pero load_all() sí carga el paquete desde el código fuente.
+# (Si tienes easyRasch instalado y funcionando, puedes sustituir esta línea por
+#  library(easyRasch).) Sus DEPENDENCIAS —eRm (CML), mirt, iarm, tidyverse, …— sí deben
+# estar instaladas; ver README.
+pkgload::load_all("easyRasch-main", quiet = TRUE)
 library(tidyverse)
 
 set.seed(1234)          # reproducibilidad de las simulaciones
