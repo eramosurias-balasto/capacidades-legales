@@ -40,6 +40,8 @@ analisis-r/*.html
 analisis-r/*_files/
 # salidas de render_seguro.R (knit intermedio por escala); la plantilla es .qmd, no .md
 analisis-r/analisis_rasch_*.md
+# figuras que knitr genera al render (artefacto, se regenera)
+analisis-r/figure/
 .Rproj.user/
 .Rhistory
 .RData
