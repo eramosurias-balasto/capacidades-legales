@@ -62,6 +62,44 @@ Bayesrel, furrr, doParallel, …). La forma más simple de instalarlas todas es 
 Si en cambio tienes easyRasch instalado y funcionando, abre `analisis_rasch.qmd` y sustituye
 la línea `pkgload::load_all(...)` por `library(easyRasch)` (ambas son válidas).
 
+### 1.2. Parche local para Windows 11 ARM (ejecución 100% secuencial)
+
+En **Windows 11 ARM con R x64 emulado**, las funciones de easyRasch que paralelizan crashean
+incluso con `cpu = 1`: `doParallel` abre un *worker* PSOCK (un subproceso) que muere bajo la
+emulación (código `-1073741569`); además, como el paquete se carga con `pkgload::load_all()`
+(no instalado), sus funciones **no se propagan** a ese subproceso.
+
+Por eso el código fuente vendido en `easyRasch-main/` lleva un **parche local mínimo**: en las
+tres funciones que la plantilla ejecuta en paralelo se cambió
+
+```r
+registerDoParallel(cores = cpu)
+```
+
+por
+
+```r
+# PATCH LOCAL (Windows ARM): con cpu==1, backend secuencial en el proceso principal.
+if (cpu == 1) foreach::registerDoSEQ() else registerDoParallel(cores = cpu)
+```
+
+Así, con `cpu == 1` el bucle `%dopar%` corre **en el proceso principal** (donde sí existen las
+funciones y objetos), sin abrir *workers*. **Con `cpu > 1` el comportamiento original se
+conserva** intacto (paralelismo con `registerDoParallel`).
+
+Archivos y funciones parchadas (buscar el comentario `# PATCH LOCAL (Windows ARM)`):
+
+| Archivo | Función |
+|---|---|
+| `easyRasch-main/R/easyRasch.R` | `RIgetfit()` |
+| `easyRasch-main/R/local_dependence.R` | `RIgetResidCor()` |
+| `easyRasch-main/R/reliabilityRMU.R` | `RIreliability()` (rama `boot = TRUE`) |
+
+No se tocó nada más del paquete. Las demás funciones con `%dopar%` (p. ej. `RIbootRestscore`,
+`RIbootPCA`) no las usa la plantilla; y cualquier `%dopar%` sin backend propio hereda el
+secuencial ya registrado. Si actualizas easyRasch a una versión nueva, vuelve a aplicar el
+parche (o corre con `cpu > 1` en una máquina no emulada).
+
 ## 2. Cómo correr la plantilla (por escala)
 
 La plantilla recibe dos parámetros: `escala` (`eaj|eal|clg|iaj|dpj`) y `csv_path` (el CSV de

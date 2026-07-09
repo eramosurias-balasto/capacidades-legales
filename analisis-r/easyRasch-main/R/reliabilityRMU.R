@@ -260,7 +260,9 @@ RIreliability <- function(data, conf_int = .95, draws = 1000,
     mirt::empirical_rxx()
 
   if (boot == TRUE) {
-    registerDoParallel(cores = cpu)
+    # PATCH LOCAL (Windows ARM): con cpu==1, backend secuencial (registerDoSEQ) en el proceso
+    # principal; el worker PSOCK muere bajo emulación x64. Con cpu>1, comportamiento original.
+    if (cpu == 1) foreach::registerDoSEQ() else registerDoParallel(cores = cpu)
     # bootstrap CI for empirical
     fit <- data.frame()
     fit <- foreach(i = 1:draws, .combine = rbind) %dopar% {

@@ -912,7 +912,11 @@ RIgetfit <- function(data, iterations = 250, cpu = 4, na.omit = TRUE, seed = 123
 
   # Use doRNG for proper reproducible parallel processing
   # This ensures each worker gets independent random streams
-  registerDoParallel(cores = cpu)
+  # PATCH LOCAL (Windows ARM): con cpu==1 usar backend secuencial (registerDoSEQ) para que
+  # %dopar% corra en el proceso principal. Bajo R x64 emulado el worker PSOCK muere
+  # (-1073741569) y, además, pkgload::load_all() no propaga el paquete a los subprocesos.
+  # Con cpu>1 se conserva el comportamiento original (registerDoParallel).
+  if (cpu == 1) foreach::registerDoSEQ() else registerDoParallel(cores = cpu)
   registerDoRNG(seed)  # Set a master seed for reproducibility
 
   if (min(as.matrix(data), na.rm = T) > 0) {
