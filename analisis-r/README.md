@@ -91,8 +91,12 @@ quarto::quarto_render(
 ```
 
 > Sugerencia: para el análisis definitivo sube `-P sim_iter:400` (o más). Las simulaciones
-> de cortes (`RIgetfit`, `RIgetResidCor`) usan varios núcleos (`cpu = 4` en la plantilla,
-> ajústalo) y pueden tardar algunos minutos.
+> de cortes (`RIgetfit`, `RIgetResidCor`) pueden tardar algunos minutos.
+>
+> **Paralelismo (`-P cpu:…`).** Por defecto `params$cpu = 1` (ejecución en un solo núcleo),
+> porque en **Windows 11 ARM con R x64 emulado** los subprocesos paralelos crashean
+> (código `-1073741569`). Si tu máquina soporta paralelismo, acelera con `-P cpu:4` (o los
+> núcleos que tengas). Solo afecta a `RIgetfit`, `RIgetResidCor` y `RIreliability(boot=TRUE)`.
 
 ## 3. Orden sugerido de lectura del reporte
 

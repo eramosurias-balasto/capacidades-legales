@@ -17,6 +17,7 @@ params:
   escala: "eal"                               # eaj | eal | clg | iaj | dpj
   csv_path: "datos_prueba/eal_sintetico.csv"  # CSV de /api/export-rasch?escala=<escala>
   sim_iter: 200                               # iteraciones de simulación (usar >=400 en el análisis definitivo)
+  cpu: 1                                       # núcleos para funciones paralelas (ver nota en setup)
 execute:
   warning: false
   message: false
@@ -44,6 +45,16 @@ library(tidyverse)
 
 set.seed(1234)          # reproducibilidad de las simulaciones
 theme_set(theme_minimal())
+
+# --- PARALELISMO: forzado a 1 núcleo (params$cpu) ---------------------------------------
+# En Windows 11 ARM con R x64 EMULADO, los subprocesos paralelos crashean
+# (código -1073741569). Las funciones de easyRasch que paralelizan usan
+# `registerDoParallel(cores = cpu)`; con `params$cpu = 1` no se abre un clúster multi-worker.
+# En esta plantilla eso aplica a RIgetfit, RIgetResidCor y RIreliability (solo si boot=TRUE).
+# Ninguna otra función usada aquí lanza procesos paralelos: RIscoreSE, RIpfit, RIrestscore,
+# etc. son secuenciales, y RIestThetasCATr —la única con furrr/plan(multisession)— NO se usa.
+# Si tu máquina sí soporta paralelismo, sube params$cpu (p. ej. 4) para acelerar.
+options(mc.cores = params$cpu)
 ```
 
 # a. Datos, itemlabels y verificación
@@ -163,7 +174,8 @@ comprueba que cada ítem correlacione con el resto de la escala.
 
 ```{r ajuste}
 # Cortes de infit/outfit por simulación (usar params$sim_iter >= 400 en el análisis real).
-simfit <- RIgetfit(items, iterations = params$sim_iter, cpu = 4)
+# cpu = params$cpu (1 por defecto): ver nota de paralelismo en el chunk setup.
+simfit <- RIgetfit(items, iterations = params$sim_iter, cpu = params$cpu)
 RIitemfit(items, simfit)
 
 # Correlación ítem–resto (discriminación).
@@ -183,7 +195,7 @@ allá del rasgo, p. ej. redacción muy parecida).
 RIpcmPCA(items)
 RIloadLoc(items)
 
-simcor <- RIgetResidCor(items, iterations = params$sim_iter, cpu = 4)
+simcor <- RIgetResidCor(items, iterations = params$sim_iter, cpu = params$cpu)
 RIresidcorr(items, cutoff = simcor$p995)
 ```
 
@@ -216,7 +228,7 @@ la fiabilidad de la separación de personas (análoga al alfa, pero en la métri
 
 ```{r targeting}
 RItargeting(items)
-RIreliability(items)
+RIreliability(items, cpu = params$cpu)  # cpu solo aplica si boot=TRUE; explícito por seguridad
 RIpfit(items)
 ```
 
