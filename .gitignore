@@ -38,6 +38,8 @@ Thumbs.db
 # análisis en R
 analisis-r/*.html
 analisis-r/*_files/
+# salidas de render_seguro.R (knit intermedio por escala); la plantilla es .qmd, no .md
+analisis-r/analisis_rasch_*.md
 .Rproj.user/
 .Rhistory
 .RData

@@ -6,6 +6,8 @@ tesina: la calibración con datos mexicanos, comparable con las tablas de Please
 (2018). La app **no** recalibra nada; solo aplica las tablas oficiales P&B.
 
 - `analisis_rasch.qmd` — plantilla Quarto parametrizada por escala.
+- `render_seguro.R` — `render_rasch()`: flujo de render 100% en la sesión de R (sin
+  subprocesos), recomendado en Windows ARM (ver §2.1).
 - `datos_prueba/eal_sintetico.csv` — 200 filas sintéticas con el formato EXACTO de
   `/api/export-rasch?escala=eal`, para probar la plantilla sin datos reales.
 - `easyRasch-main/` — código fuente del paquete easyRasch v0.5.1.1 (GPL ≥ 3), incluido para
@@ -122,25 +124,45 @@ Si actualizas easyRasch a una versión nueva, vuelve a aplicar los parches (o co
 
 ## 2. Cómo correr la plantilla (por escala)
 
-La plantilla recibe dos parámetros: `escala` (`eaj|eal|clg|iaj|dpj`) y `csv_path` (el CSV de
-esa escala). Cada escala se corre por separado (una tiene 4 ítems, otra 9, etc.).
+La plantilla recibe cuatro parámetros: `escala` (`eaj|eal|clg|iaj|dpj`), `csv_path` (el CSV de
+esa escala), `sim_iter` (iteraciones de simulación) y `cpu` (núcleos). Cada escala se corre por
+separado (una tiene 4 ítems, otra 9, etc.).
 
-**Desde la terminal (Quarto CLI):**
+### 2.1. Flujo recomendado en Windows ARM (`render_seguro.R`)
 
+En **Windows 11 ARM con R x64 emulado**, incluso lanzar el render como proceso hijo puede
+fallar. El flujo que corre **100% en la sesión de R, sin subprocesos** es: `knitr::knit()`
+ejecuta el `.qmd` en la sesión actual (→ produce un `.md` con todo ya calculado) y luego
+`quarto::quarto_render()` sobre ese `.md` corre **solo pandoc** (motor markdown, sin R).
+`render_seguro.R` encadena esos pasos:
+
+```r
+# Desde la carpeta analisis-r/ (Session -> Set Working Directory -> To Source File Location)
+source("render_seguro.R")
+
+# prueba con el CSV sintético:
+render_rasch("eal", "datos_prueba/eal_sintetico.csv")
+
+# datos reales (CSV exportado del dashboard), con más iteraciones:
+render_rasch("iaj", "~/Descargas/rasch_iaj_2026-08-01.csv", sim_iter = 400)
+```
+
+`render_rasch(escala, csv_path, sim_iter = 400, cpu = 1)` valida que el CSV exista, fija
+`options(mc.cores = cpu)` y genera `analisis_rasch_<escala>.md` y `analisis_rasch_<escala>.html`
+(nombrados **por escala**, para no pisar corridas de otras escalas).
+
+### 2.2. Alternativa (máquinas no-ARM): `quarto render` directo del `.qmd`
+
+En máquinas donde el motor R de Quarto corre sin problemas, puedes renderizar el `.qmd`
+directamente (Quarto invoca knitr como de costumbre):
+
+**Terminal (Quarto CLI):**
 ```bash
 cd analisis-r
 quarto render analisis_rasch.qmd -P escala:eal -P csv_path:datos_prueba/eal_sintetico.csv
 ```
 
-Genera `analisis_rasch.html` en la carpeta. Para otra escala con datos reales, descarga su
-CSV desde la pestaña **Exportar** del dashboard y pásalo:
-
-```bash
-quarto render analisis_rasch.qmd -P escala:iaj -P csv_path:~/Descargas/rasch_iaj_2026-08-01.csv
-```
-
-**Desde R (equivalente):**
-
+**Desde R:**
 ```r
 quarto::quarto_render(
   "analisis_rasch.qmd",
@@ -148,13 +170,13 @@ quarto::quarto_render(
 )
 ```
 
-> Sugerencia: para el análisis definitivo sube `-P sim_iter:400` (o más). Las simulaciones
-> de cortes (`RIgetfit`, `RIgetResidCor`) pueden tardar algunos minutos.
+> Sugerencia: para el análisis definitivo usa `sim_iter = 400` (o más). Las simulaciones de
+> cortes (`RIgetfit`, `RIgetResidCor`) pueden tardar algunos minutos.
 >
-> **Paralelismo (`-P cpu:…`).** Por defecto `params$cpu = 1` (ejecución en un solo núcleo),
-> porque en **Windows 11 ARM con R x64 emulado** los subprocesos paralelos crashean
-> (código `-1073741569`). Si tu máquina soporta paralelismo, acelera con `-P cpu:4` (o los
-> núcleos que tengas). Solo afecta a `RIgetfit`, `RIgetResidCor` y `RIreliability(boot=TRUE)`.
+> **Paralelismo (`cpu`).** Por defecto `cpu = 1` (un solo núcleo) por la emulación ARM
+> (subprocesos crashean, código `-1073741569`). En una máquina no emulada sube `cpu` (p. ej.
+> `render_rasch(..., cpu = 4)` o `-P cpu:4`) para acelerar `RIgetfit`, `RIgetResidCor`,
+> `RIreliability(boot=TRUE)` y `RIestThetasCATr`.
 
 ## 3. Orden sugerido de lectura del reporte
 
