@@ -128,7 +128,7 @@ Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítem
    - **Entidad federativa** (dropdown, obligatoria para TODOS, 0004): las 32 entidades oficiales + "Prefiero no responder" → `entidad`.
    - **Solo `general`** (además de lo anterior): "Máximo nivel de estudios" propio como **dropdown** (mismo catálogo que padres pero SIN "No lo sé") → `nivel_educativo_propio`, obligatorio; y "¿Cuál es su ocupación?" (texto libre, máx. 120, obligatorio) → `ocupacion`.
    - Las 5 escalas psicométricas son IDÉNTICAS en ambos flujos.
-   - **Presentación (RU.L Design System):** un ítem por pantalla con "Continuar"/"Atrás", progreso de 8 secciones con hairline animada (respeta `prefers-reduced-motion`), tokens cargados solo en las rutas públicas, registro **usted**. La pantalla de gracias muestra un folio anónimo (últimos 6 caracteres del uuid) en mono. Ver DECISIONES.md D12.
+   - **Presentación (RU.L Design System):** un ítem por pantalla con "Continuar"/"Atrás", progreso de 8 secciones con hairline animada (respeta `prefers-reduced-motion`), tokens cargados solo en las rutas públicas, registro **tú** (población de EMS; el aviso de privacidad conserva usted salvo decisión en contrario). La pantalla de gracias muestra un folio anónimo (últimos 6 caracteres del uuid) en mono. Ver DECISIONES.md D12.
 4. **Escala EAJ** (6 ítems), 5. **Escala EAL** (4 ítems), 6. **Escala CLG** (6 ítems), 7. **Escala IAJ** (9 ítems), 8. **Escala DPJ** (6 ítems) — cada una con su instrucción introductoria y sus categorías de respuesta (sección 5). Presentar los ítems como matriz Likert en desktop y como tarjetas apiladas en móvil.
 9. **Envío y gracias.** Al enviar, POST a `/api/submit`. Registrar `duracion_segundos` (desde aceptar el aviso hasta enviar). Mostrar `/gracias`.
 
@@ -138,7 +138,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.1 Escala de autoeficacia jurídica (EAJ) — 6 ítems
 
-*Instrucción:* "Piense en general en problemas jurídicos importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?"
+*Instrucción:* "Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
 
 1. Siempre consigo resolver problemas difíciles si me esfuerzo lo suficiente.
 2. Si alguien se opone a mí, puedo encontrar los medios y las formas de conseguir lo que quiero.
@@ -151,7 +151,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.2 Escala de ansiedad legal (EAL) — 4 ítems
 
-*Instrucción:* "Ahora, piense en general en problemas legales importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?"
+*Instrucción:* "Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
 
 1. Me da miedo hablar directamente con la gente para hacer valer mis derechos.
 2. La preocupación por no expresarme con claridad puede impedirme actuar.
@@ -162,20 +162,20 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.3 Escala de confianza jurídica general (CLG) — 6 ítems
 
-*Instrucción:* "Si se encontrara ante un conflicto legal importante —como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa económica como parte de un divorcio o enfrentarse al despojo de su vivienda—, ¿qué grado de confianza tiene en que podría lograr un resultado justo y satisfactorio para usted en las siguientes situaciones?"
+*Instrucción:* "Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?"
 
 1. El desacuerdo es considerable y la tensión es alta.
 2. La otra parte dice que "no descansará hasta que se haga justicia".
 3. La otra parte se niega a hablar contigo salvo a través de su abogado.
-4. Una notificación del tribunal le indica que debe rellenar ciertos formularios, incluyendo la exposición de su caso.
-5. El asunto llega a los tribunales, un abogado representa a la otra parte y usted está solo.
-6. El tribunal dicta una sentencia en su contra, que usted considera injusta. Le informan de que tiene derecho a apelar.
+4. Una notificación del tribunal te indica que debes rellenar ciertos formularios, incluyendo la exposición de tu caso.
+5. El asunto llega a los tribunales, un abogado representa a la otra parte y tú estás solo.
+6. El tribunal dicta una sentencia en tu contra, que consideras injusta. Te informan de que tienes derecho a apelar.
 
 *Categorías (mostrar en este orden, como en el instrumento):* muy seguro / bastante seguro / no muy seguro / nada seguro.
 
 ### 5.4 Escala de inaccesibilidad a la justicia (IAJ) — 9 ítems
 
-*Instrucción:* "Ahora, algunas preguntas sobre su impresión general y su experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como el despido injustificado por parte de su empleador, las lesiones sufridas como consecuencia de la negligencia de otra persona, las disputas económicas en el marco de un divorcio o el despojo de su vivienda. Teniendo en cuenta cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?"
+*Instrucción:* "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?"
 
 1. Cuestiones como estas suelen resolverse con rapidez y eficacia.
 2. Las personas con menos recursos económicos suelen obtener un resultado peor.
@@ -191,7 +191,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.5 Escala de desigualdad percibida de la justicia (DPJ) — 6 ítems
 
-*Instrucción:* misma introducción que IAJ, terminando en "Pensando en cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?"
+*Instrucción:* misma introducción que IAJ, terminando en "Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?"
 
 1. Las personas con menos dinero suelen obtener peores resultados.
 2. En cuestiones como estas, la ley es como un juego en el que los más hábiles y con más recursos tienen más probabilidades de conseguir lo que quieren.

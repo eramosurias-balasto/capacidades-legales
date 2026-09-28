@@ -40,13 +40,13 @@ export default function Gracias({ searchParams }: { searchParams: { folio?: stri
           color: 'var(--text-primary)',
         }}
       >
-        Hemos registrado sus respuestas.
+        Registramos tus respuestas.
       </h1>
       <p style={{ margin: '20px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-        Gracias por su tiempo. Sus respuestas quedan guardadas de forma anónima y contribuyen a un estudio sobre el acceso a la justicia en México.
+        Gracias por tu tiempo. Tus respuestas quedan guardadas de forma anónima y contribuyen a un estudio sobre el acceso a la justicia en México.
       </p>
       <p style={{ margin: '24px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-        ¿Le interesa consultar los resultados del estudio? Escríbame a{' '}
+        ¿Te interesa consultar los resultados del estudio? Escríbeme a{' '}
         <a href="mailto:eramosurias@gmail.com" style={{ color: 'var(--accent)' }}>
           eramosurias@gmail.com
         </a>

@@ -44,10 +44,10 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eaj: {
     id: "eaj",
     nombre: "Escala de autoeficacia jurídica (EAJ)",
-    // UI: recordatorio singular por ítem (dice "problemas legales", no "jurídicos"; ver D13).
-    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida le describe la siguiente afirmación?",
+    // UI: recordatorio singular por ítem, en tú (ver DECISIONES.md D13).
+    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida te describe la siguiente afirmación?",
     instruccion:
-      "Piense en general en problemas jurídicos importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?",
+      "Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?",
     items: [
       "Siempre consigo resolver problemas difíciles si me esfuerzo lo suficiente.",
       "Si alguien se opone a mí, puedo encontrar los medios y las formas de conseguir lo que quiero.",
@@ -61,9 +61,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eal: {
     id: "eal",
     nombre: "Escala de ansiedad legal (EAL)",
-    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida le describe la siguiente afirmación?",
+    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida te describe la siguiente afirmación?",
     instruccion:
-      "Ahora, piense en general en problemas legales importantes, como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa por dinero en el marco de un divorcio o enfrentarse al despojo de su vivienda. ¿En qué medida le describen las siguientes afirmaciones?",
+      "Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?",
     items: [
       "Me da miedo hablar directamente con la gente para hacer valer mis derechos.",
       "La preocupación por no expresarme con claridad puede impedirme actuar.",
@@ -76,16 +76,16 @@ export const ESCALAS: Record<EscalaId, Escala> = {
     id: "clg",
     nombre: "Escala de confianza jurídica general (CLG)",
     preguntaCorta:
-      "Si se encontrara ante un problema legal importante, ¿qué grado de confianza tiene en que podría lograr un resultado justo y satisfactorio para usted en la siguiente situación?",
+      "Si te encontraras ante un conflicto legal importante, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en la siguiente situación?",
     instruccion:
-      "Si se encontrara ante un conflicto legal importante —como ser despedido injustamente por su empleador, sufrir lesiones como consecuencia de la negligencia de otra persona, verse envuelto en una disputa económica como parte de un divorcio o enfrentarse al despojo de su vivienda—, ¿qué grado de confianza tiene en que podría lograr un resultado justo y satisfactorio para usted en las siguientes situaciones?",
+      "Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?",
     items: [
       "El desacuerdo es considerable y la tensión es alta.",
       "La otra parte dice que \"no descansará hasta que se haga justicia\".",
       "La otra parte se niega a hablar contigo salvo a través de su abogado.",
-      "Una notificación del tribunal le indica que debe rellenar ciertos formularios, incluyendo la exposición de su caso.",
-      "El asunto llega a los tribunales, un abogado representa a la otra parte y usted está solo.",
-      "El tribunal dicta una sentencia en su contra, que usted considera injusta. Le informan de que tiene derecho a apelar.",
+      "Una notificación del tribunal te indica que debes rellenar ciertos formularios, incluyendo la exposición de tu caso.",
+      "El asunto llega a los tribunales, un abogado representa a la otra parte y tú estás solo.",
+      "El tribunal dicta una sentencia en tu contra, que consideras injusta. Te informan de que tienes derecho a apelar.",
     ],
     categorias: ["muy seguro", "bastante seguro", "no muy seguro", "nada seguro"],
   },
@@ -93,9 +93,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
     id: "iaj",
     nombre: "Escala de inaccesibilidad a la justicia (IAJ)",
     preguntaCorta:
-      "Considere su impresión general y su experiencia con el sistema de justicia. ¿En qué medida está de acuerdo o en desacuerdo con la siguiente afirmación?",
+      "Considera tu impresión general y tu experiencia con el sistema de justicia. ¿En qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
-      "Ahora, algunas preguntas sobre su impresión general y su experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como el despido injustificado por parte de su empleador, las lesiones sufridas como consecuencia de la negligencia de otra persona, las disputas económicas en el marco de un divorcio o el despojo de su vivienda. Teniendo en cuenta cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?",
+      "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [
       "Cuestiones como estas suelen resolverse con rapidez y eficacia.",
       "Las personas con menos recursos económicos suelen obtener un resultado peor.",
@@ -113,9 +113,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
     id: "dpj",
     nombre: "Escala de desigualdad percibida de la justicia (DPJ)",
     preguntaCorta:
-      "Considere su impresión general y su experiencia con el sistema de justicia. ¿En qué medida está de acuerdo o en desacuerdo con la siguiente afirmación?",
+      "Considera tu impresión general y tu experiencia con el sistema de justicia. ¿En qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
-      "Ahora, algunas preguntas sobre su impresión general y su experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como el despido injustificado por parte de su empleador, las lesiones sufridas como consecuencia de la negligencia de otra persona, las disputas económicas en el marco de un divorcio o el despojo de su vivienda. Pensando en cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones?",
+      "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [
       "Las personas con menos dinero suelen obtener peores resultados.",
       "En cuestiones como estas, la ley es como un juego en el que los más hábiles y con más recursos tienen más probabilidades de conseguir lo que quieren.",

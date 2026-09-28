@@ -16,7 +16,7 @@ export default function NoEncontrada() {
         Encuesta no disponible
       </h1>
       <p style={{ margin: '18px auto 0', maxWidth: '44ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-        El enlace no corresponde a ninguna encuesta activa. Verifique que sea el enlace exacto que le compartió su institución.
+        El enlace no corresponde a ninguna encuesta activa. Verifica que sea el enlace exacto que te compartió tu institución.
       </p>
     </main>
   );

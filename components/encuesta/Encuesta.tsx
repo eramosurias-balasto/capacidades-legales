@@ -341,7 +341,7 @@ function Portada() {
           color: 'var(--text-primary)',
         }}
       >
-        ¿Qué tan capaz se siente de enfrentar un problema legal serio por su cuenta?
+        ¿Qué tan capaz te sientes de enfrentar un problema legal serio por tu cuenta?
       </h1>
       <p style={{ margin: '24px 0 0', fontSize: 'var(--text-lead)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '44ch' }}>
         Un despido injusto, una deuda que no reconoce, el despojo de una vivienda. Este estudio mide qué tan preparadas se sienten las personas para
@@ -357,8 +357,8 @@ function Portada() {
 
       <div style={{ borderTop: 'var(--rule-thin) solid var(--border-default)', paddingTop: 24 }}>
         <p style={{ margin: '0 0 20px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '48ch' }}>
-          Al continuar acepta el{' '}
-          <a href="/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">aviso de privacidad</a> de este estudio. Sus respuestas son anónimas: no pedimos su nombre ni datos que permitan identificarle.
+          Al continuar aceptas el{' '}
+          <a href="/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">aviso de privacidad</a> de este estudio. Tus respuestas son anónimas: no pedimos tu nombre ni datos que permitan identificarte.
         </p>
       </div>
     </section>
@@ -377,8 +377,8 @@ function Cohorte({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos; se
         { valor: 'general_no_curso', etiqueta: 'No' },
       ];
   const pregunta = escolar
-    ? '¿Cuál es su situación respecto a la materia de Derecho en su escuela?'
-    : '¿Alguna vez ha cursado una clase de Derecho?';
+    ? '¿Cuál es tu situación respecto a la materia de Derecho en tu escuela?'
+    : '¿Alguna vez has cursado una clase de Derecho?';
   const ayuda = escolar ? '' : 'Cuenta cualquier curso, taller o formación sobre Derecho, dentro o fuera de la escuela.';
 
   return (
@@ -407,7 +407,7 @@ function Cohorte({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos; se
           />
           <div style={{ maxWidth: 200 }}>
             <Input
-              label="¿En qué año terminó su última clase de Derecho?"
+              label="¿En qué año terminaste tu última clase de Derecho?"
               value={datos.curso_derecho_anio}
               onChange={(v) => set('curso_derecho_anio', v)}
               type="number"
@@ -427,10 +427,10 @@ function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos;
   const niveles = opcionesSelect(NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO);
   return (
     <section className="ru-fade" style={{ paddingTop: 40 }}>
-      <Eyebrow>Sobre usted</Eyebrow>
+      <Eyebrow>Sobre ti</Eyebrow>
       <h2 style={tituloH2}>Unos datos generales</h2>
       <p style={{ margin: '16px 0 32px', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '46ch' }}>
-        Sirven para describir a quienes participan. No permiten identificarle.
+        Sirven para describir a quienes participan. No permiten identificarte.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -439,8 +439,9 @@ function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos;
         </div>
 
         <GrupoChips label="Género" opciones={opcionesSelect(GENEROS, ETIQUETAS_GENERO)} valor={datos.genero} onChange={(v) => set('genero', v)} />
-        <GrupoChips label="¿Se considera una persona indígena?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_indigena} onChange={(v) => set('se_considera_indigena', v)} />
-        <GrupoChips label="¿Se considera una persona afromexicana o afrodescendiente?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_afro} onChange={(v) => set('se_considera_afro', v)} />
+        {/* Autoadscripción: pendiente 2.º pass alinear al texto literal del Censo 2020 (registro ya en tú). */}
+        <GrupoChips label="¿Te consideras una persona indígena?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_indigena} onChange={(v) => set('se_considera_indigena', v)} />
+        <GrupoChips label="¿Te consideras una persona afromexicana o afrodescendiente?" opciones={opcionesSelect(SI_NO_PNR, ETIQUETAS_SI_NO_PNR)} valor={datos.se_considera_afro} onChange={(v) => set('se_considera_afro', v)} />
 
         {tipo === 'general' ? (
           <SelectField label="Máximo nivel de estudios" value={datos.nivel_educativo_propio} onChange={(v) => set('nivel_educativo_propio', v)} options={opcionesSelect(NIVELES_EDUCATIVOS_PROPIO, ETIQUETAS_NIVEL_EDUCATIVO)} required />
@@ -452,12 +453,12 @@ function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos;
 
         {tipo === 'general' ? (
           <Input
-            label="¿Cuál es su ocupación?"
+            label="¿Cuál es tu ocupación?"
             value={datos.ocupacion}
             onChange={(v) => set('ocupacion', v)}
             maxLength={MAX_OCUPACION}
             placeholder="Docente, comerciante, estudiante…"
-            hint="Por ejemplo: 'comerciante', 'contadora'. No incluya nombres ni datos personales."
+            hint="Por ejemplo: 'comerciante', 'contadora'. No incluyas nombres ni datos personales."
             required
           />
         ) : null}
@@ -502,7 +503,7 @@ function EscalaIntro({ escala }: { escala: EscalaId }) {
       </p>
       <div style={{ borderLeft: 'var(--rule-medium) solid var(--accent)', paddingLeft: 16, margin: '28px 0 0' }}>
         <p style={{ margin: 0, fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-          Verá una afirmación por pantalla. Elija en cada una la opción que mejor le describa; puede cambiar su respuesta antes de avanzar.
+          Verás una afirmación por pantalla. Elige en cada una la opción que mejor te describa; puedes cambiar tu respuesta antes de avanzar.
         </p>
       </div>
     </section>
@@ -558,9 +559,9 @@ function YaEnviada() {
       <Masthead sectionLabel="" />
       <div style={{ ...columna, paddingTop: 72, textAlign: 'center' }}>
         <HeavyBar center />
-        <h2 style={{ ...tituloH2, maxWidth: '22ch', margin: '0 auto' }}>Ya registramos su respuesta</h2>
+        <h2 style={{ ...tituloH2, maxWidth: '22ch', margin: '0 auto' }}>Ya registramos tu respuesta</h2>
         <p style={{ margin: '20px auto 0', maxWidth: '42ch', fontSize: 'var(--text-body)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-          Desde este dispositivo ya se envió una respuesta a esta encuesta. Gracias por su participación anónima.
+          Desde este dispositivo ya se envió una respuesta a esta encuesta. Gracias por tu participación anónima.
         </p>
       </div>
     </div>

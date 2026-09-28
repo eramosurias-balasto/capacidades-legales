@@ -54,7 +54,7 @@ describe('lib/instrumento.ts coincide carácter por carácter con el SPEC §5', 
           // DECISIONES.md D1: reconstruida (el SPEC no la da literal). Al menos debe
           // terminar con la oración final que el SPEC sí especifica.
           expect(ESCALAS.dpj.instruccion).toMatch(
-            /Pensando en cuestiones como estas, ¿en qué medida está de acuerdo o en desacuerdo con las siguientes afirmaciones\?$/,
+            /Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones\?$/,
           );
         } else {
           expect(ESCALAS[id].instruccion).toBe(instruccionDelSpec(id));

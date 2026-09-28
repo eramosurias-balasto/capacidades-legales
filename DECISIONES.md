@@ -87,10 +87,10 @@ reales: `enc-2pit26` = Institución Privada, `enc-9cxazi` = Escuela Nacional Pre
 slugs escolares (resolución dinámica por `getInstitucionActiva`; anti-dup con la key
 `encuesta_enviada_<slug>`), así que basta el UPDATE.
 
-## D9 — Tratamiento usted/tú
+## D9 — Tratamiento usted/tú (SUPERADA por D14)
 
-Se implementa el texto tal cual (mezcla usted/tú del instrumento). Decisión metodológica
-del autor ya tomada en §11 del SPEC; el código no la "corrige".
+La v1 implementó el texto tal cual (mezcla usted/tú). En sept. 2026 el autor unificó el
+instrumento a **tú** (población de EMS); ver **D14**.
 
 ## D10 — Link "general" para público adulto (muestra de conveniencia)
 
@@ -161,7 +161,28 @@ en dos lugares, SIN tocar el instrumento validado:
   campo nuevo `preguntaCorta` (uno por escala) y **no forman parte del instrumento**: no los
   cubre `instrumento.verify.test.ts`, que sigue pasando sin cambios.
 
-**Nota literal:** la versión corta de **EAJ** dice "problemas **legales** importantes", mientras
-que la instrucción completa del instrumento dice "problemas **jurídicos** importantes". Es
-intencional (los recordatorios usan un registro uniforme "legal" en las cinco secciones); la
-instrucción validada de EAJ conserva "jurídicos" tal cual.
+**Nota:** los recordatorios están en **tú** (D14) y usan "problemas legales", igual que las
+instrucciones completas tras la unificación de D14 (antes EAJ decía "jurídicos").
+
+## D14 — Registro **tú** y encuadre adaptado del instrumento (sept. 2026)
+
+Alineación del instrumento desplegado con el capítulo 3 (§3.2) de la tesina. Decisión del
+autor; sustituye a D9.
+
+- **Registro:** todo el instrumento y el copy de la encuesta pasan a **tú** (población de EMS
+  de 17-18 años). Antes había mezcla usted/tú (D9). Reactivos afectados: solo CLG 4, 5 y 6
+  (los demás son en 1.ª persona o impersonales; CLG 3 ya estaba en tú, "contigo").
+- **Encuadre sustituido:** el enunciado que encuadra las cinco escalas cambió de los cuatro
+  ejemplos adultos de P&B (divorcio, despojo de vivienda…) por los **cuatro ejemplos
+  justiciables al alcance de un bachiller** de §3.2 de la tesina: (1) despido/no pago;
+  (2) lesión en accidente por descuido de otra persona; (3) producto/servicio defectuoso sin
+  devolución; (4) la familia deja la vivienda por conflicto con arrendador/propietario. Aplica
+  a EAJ, EAL, CLG, IAJ y DPJ. Es la "adaptación de fondo" de la tesina; **es una desviación
+  deliberada del wording de P&B** (que pide conservar redacción), y así debe declararse en §3.2.
+- **"jurídicos" → "legales":** el encuadre usa "legales" de forma uniforme (antes EAJ decía
+  "jurídicos"). El nombre de la escala "Autoeficacia jurídica" no cambia.
+- **Fuente de verdad:** se actualizaron **juntos** SPEC §5 e `lib/instrumento.ts`;
+  `instrumento.verify.test.ts` sigue verificando coincidencia carácter por carácter.
+- **Pendiente 2.º pass:** (a) el **aviso de privacidad** conserva usted (texto del autor; falta
+  su decisión de pasarlo a tú); (b) la **autoadscripción** indígena/afro ya está en tú, pero
+  falta alinear su redacción al texto literal del **Censo 2020** (básico vs ampliado).
