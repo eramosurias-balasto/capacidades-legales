@@ -17,7 +17,12 @@ export function cohortesPermitidas(tipo: TipoInstitucion): readonly string[] {
 
 // --- Demografía común a TODOS los tipos ---
 export const GENEROS = ['mujer', 'hombre', 'otro', 'prefiero_no_responder'] as const;
-export const SI_NO_PNR = ['si', 'no', 'prefiero_no_responder'] as const;
+
+/**
+ * Categorías de autoadscripción indígena y afromexicana. Alineadas al Censo de Población y
+ * Vivienda 2020 (INEGI): Sí / Sí, en parte / No / No sé. Ver DECISIONES.md D16.
+ */
+export const AUTOADSCRIPCION = ['si', 'si_en_parte', 'no', 'no_se'] as const;
 
 /** Nivel educativo de padre y madre (se pregunta a todos): incluye 'no_lo_se'. */
 export const NIVELES_EDUCATIVOS_PADRES = [
@@ -98,10 +103,11 @@ export const ETIQUETAS_GENERO: Record<(typeof GENEROS)[number], string> = {
   prefiero_no_responder: 'Prefiero no responder',
 };
 
-export const ETIQUETAS_SI_NO_PNR: Record<(typeof SI_NO_PNR)[number], string> = {
+export const ETIQUETAS_AUTOADSCRIPCION: Record<(typeof AUTOADSCRIPCION)[number], string> = {
   si: 'Sí',
+  si_en_parte: 'Sí, en parte',
   no: 'No',
-  prefiero_no_responder: 'Prefiero no responder',
+  no_se: 'No sé',
 };
 
 export const ETIQUETAS_NIVEL_EDUCATIVO: Record<(typeof NIVELES_EDUCATIVOS_PADRES)[number], string> = {

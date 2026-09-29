@@ -75,8 +75,8 @@ create table respuestas (
   -- demografía
   edad int check (edad between 12 and 99),
   genero text,
-  se_considera_indigena text,        -- 'si' | 'no' | 'prefiero_no_responder'
-  se_considera_afro text,            -- 'si' | 'no' | 'prefiero_no_responder'
+  se_considera_indigena text,        -- 'si' | 'si_en_parte' | 'no' | 'no_se'  (Censo 2020, D16)
+  se_considera_afro text,            -- 'si' | 'si_en_parte' | 'no' | 'no_se'  (Censo 2020, D16)
   nivel_educativo_padre text,
   nivel_educativo_madre text,
 
@@ -122,8 +122,8 @@ Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítem
 3. **Demografía.**
    - Edad: campo numérico (12–99).
    - Género: Mujer / Hombre / Otro / Prefiero no responder.
-   - "¿Te consideras una persona indígena?": Sí / No / Prefiero no responder.
-   - "¿Te consideras una persona afromexicana o afrodescendiente?": Sí / No / Prefiero no responder.
+   - "De acuerdo con tu cultura, ¿te consideras indígena?": Sí / Sí, en parte / No / No sé (Censo 2020, D16).
+   - "Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te consideras afromexicano(a), negro(a) o afrodescendiente?": Sí / Sí, en parte / No / No sé (Censo 2020, D16).
    - "…máximo nivel de estudios del padre" y "…de la madre" como **dropdown** (mismas opciones, se preguntan a TODOS): Sin estudios / Primaria / Secundaria / Preparatoria o bachillerato / Licenciatura / Posgrado / No lo sé.
    - **Entidad federativa** (dropdown, obligatoria para TODOS, 0004): las 32 entidades oficiales + "Prefiero no responder" → `entidad`.
    - **Solo `general`** (además de lo anterior): "Máximo nivel de estudios" propio como **dropdown** (mismo catálogo que padres pero SIN "No lo sé") → `nivel_educativo_propio`, obligatorio; y "¿Cuál es su ocupación?" (texto libre, máx. 120, obligatorio) → `ocupacion`.

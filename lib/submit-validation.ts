@@ -9,7 +9,7 @@ import {
   TipoInstitucion,
   cohortesPermitidas,
   GENEROS,
-  SI_NO_PNR,
+  AUTOADSCRIPCION,
   NIVELES_EDUCATIVOS_PADRES,
   NIVELES_EDUCATIVOS_PROPIO,
   ENTIDADES,
@@ -91,8 +91,8 @@ export function validarSubmit(payload: unknown, tipo: TipoInstitucion): Resultad
 
   // Demografía común (todas con opción de escape → obligatorias y dentro de catálogo).
   if (!GENEROS.includes(p.genero as never)) return err('genero fuera de catálogo');
-  if (!SI_NO_PNR.includes(p.se_considera_indigena as never)) return err('se_considera_indigena fuera de catálogo');
-  if (!SI_NO_PNR.includes(p.se_considera_afro as never)) return err('se_considera_afro fuera de catálogo');
+  if (!AUTOADSCRIPCION.includes(p.se_considera_indigena as never)) return err('se_considera_indigena fuera de catálogo');
+  if (!AUTOADSCRIPCION.includes(p.se_considera_afro as never)) return err('se_considera_afro fuera de catálogo');
   if (!NIVELES_EDUCATIVOS_PADRES.includes(p.nivel_educativo_padre as never)) {
     return err('nivel_educativo_padre fuera de catálogo');
   }

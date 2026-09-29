@@ -16,7 +16,7 @@ const demoComun = {
   edad: 17,
   genero: 'mujer',
   se_considera_indigena: 'no',
-  se_considera_afro: 'prefiero_no_responder',
+  se_considera_afro: 'no_se',
   nivel_educativo_padre: 'licenciatura',
   nivel_educativo_madre: 'no_lo_se',
   entidad: 'Jalisco',

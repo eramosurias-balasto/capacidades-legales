@@ -57,7 +57,8 @@ scoring ni tablas Rasch.
 
 Se guardan valores canónicos `snake_case` y se validan en el servidor. Etiqueta visible → valor:
 - **genero:** Mujer→`mujer`, Hombre→`hombre`, Otro→`otro`, Prefiero no responder→`prefiero_no_responder`.
-- **se_considera_indigena / se_considera_afro:** Sí→`si`, No→`no`, Prefiero no responder→`prefiero_no_responder`.
+- **se_considera_indigena / se_considera_afro:** Sí→`si`, Sí, en parte→`si_en_parte`, No→`no`,
+  No sé→`no_se` (Censo 2020; ver D16). Antes: `si`/`no`/`prefiero_no_responder`.
 - **nivel_educativo_padre / _madre:** Sin estudios→`sin_estudios`, Primaria→`primaria`,
   Secundaria→`secundaria`, Preparatoria o bachillerato→`preparatoria`, Licenciatura→`licenciatura`,
   Posgrado→`posgrado`, No lo sé→`no_lo_se`.
@@ -187,9 +188,8 @@ autor; sustituye a D9.
   "jurídicos"). El nombre de la escala "Autoeficacia jurídica" no cambia.
 - **Fuente de verdad:** se actualizaron **juntos** SPEC §5 e `lib/instrumento.ts`;
   `instrumento.verify.test.ts` sigue verificando coincidencia carácter por carácter.
-- **Pendiente 2.º pass:** (a) el **aviso** conserva usted (texto del autor; falta su decisión de
-  pasarlo a tú; ver D15); (b) la **autoadscripción** indígena/afro ya está en tú, pero falta
-  alinear su redacción al texto literal del **Censo 2020** (básico vs ampliado).
+- **Pendiente 2.º pass:** el **aviso** conserva usted (texto del autor; falta su decisión de
+  pasarlo a tú; ver D15). La **autoadscripción** ya se alineó al Censo 2020 (ver D16).
 
 ## D15 — "Aviso general al encuestado" con aceptación explícita (sept. 2026)
 
@@ -206,3 +206,21 @@ definitivo del autor, 29 de septiembre de 2026, en usted). Decisión del autor.
 - **Ruta pública:** se conserva el path `/aviso-de-privacidad` (para no romper enlaces externos),
   pero su contenido y `<title>` ahora son el "Aviso general al encuestado". La portada ya no
   enlaza a esa página: el aviso se muestra en el modal al continuar.
+
+## D16 — Autoadscripción alineada al Censo de Población y Vivienda 2020 (sept. 2026)
+
+Resuelve el pendiente de D14. Redacción y categorías tomadas del Censo 2020 (INEGI). Decisión
+del autor.
+
+- **Redacción (en tú):**
+  - Indígena: *"De acuerdo con tu cultura, ¿te consideras indígena?"*
+  - Afromexicano: *"Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te
+    consideras afromexicano(a), negro(a) o afrodescendiente?"*
+- **Categorías:** **Sí / Sí, en parte / No / No sé** (valores `si` / `si_en_parte` / `no` /
+  `no_se`). Se **elimina** "Prefiero no responder" de estas dos preguntas para coincidir con el
+  Censo. Catálogo dedicado `AUTOADSCRIPCION` (antes compartían el genérico `SI_NO_PNR`, ya
+  retirado).
+- **Sin migración:** las columnas `se_considera_indigena` / `se_considera_afro` son `text` libre
+  (sin `CHECK`); la validación de catálogo es de capa de aplicación. Respuestas previas con
+  `prefiero_no_responder` (si las hubiera) siguen almacenadas; el dashboard solo grafica las
+  cuatro categorías vigentes.

@@ -123,7 +123,7 @@ describe('POST /api/submit', () => {
         cohorte: 'general_si_curso',
         edad: 40,
         genero: 'mujer',
-        se_considera_indigena: 'prefiero_no_responder',
+        se_considera_indigena: 'si_en_parte',
         se_considera_afro: 'no',
         nivel_educativo_padre: 'no_lo_se',
         nivel_educativo_madre: 'licenciatura',

@@ -8,11 +8,11 @@ import {
   COHORTES_ESCOLAR,
   COHORTES_GENERAL,
   GENEROS,
-  SI_NO_PNR,
+  AUTOADSCRIPCION,
   NIVELES_EDUCATIVOS_PADRES,
   NIVELES_EDUCATIVOS_PROPIO,
   ETIQUETAS_GENERO,
-  ETIQUETAS_SI_NO_PNR,
+  ETIQUETAS_AUTOADSCRIPCION,
   ETIQUETAS_NIVEL_EDUCATIVO,
   TipoInstitucion,
 } from './catalogos';
@@ -251,8 +251,8 @@ export function construirResultados(respuestas: Respuesta[], instituciones: Inst
   function demografia(rows: Respuesta[], incluirGeneral: boolean): DemografiaTipo {
     const base: DemografiaTipo = {
       genero: tablaCat(rows, (r) => r.genero, GENEROS, ETIQUETAS_GENERO, 'Género'),
-      indigena: tablaCat(rows, (r) => r.se_considera_indigena, SI_NO_PNR, ETIQUETAS_SI_NO_PNR, '¿Se considera indígena?'),
-      afro: tablaCat(rows, (r) => r.se_considera_afro, SI_NO_PNR, ETIQUETAS_SI_NO_PNR, '¿Se considera afromexicano/a?'),
+      indigena: tablaCat(rows, (r) => r.se_considera_indigena, AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION, '¿Se considera indígena?'),
+      afro: tablaCat(rows, (r) => r.se_considera_afro, AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION, '¿Se considera afromexicano/a, negro/a o afrodescendiente?'),
       nivelPadre: tablaCat(rows, (r) => r.nivel_educativo_padre, NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO, 'Nivel educativo del padre'),
       nivelMadre: tablaCat(rows, (r) => r.nivel_educativo_madre, NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO, 'Nivel educativo de la madre'),
       edad: tablaEdad(rows),
