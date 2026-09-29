@@ -187,6 +187,22 @@ autor; sustituye a D9.
   "jurídicos"). El nombre de la escala "Autoeficacia jurídica" no cambia.
 - **Fuente de verdad:** se actualizaron **juntos** SPEC §5 e `lib/instrumento.ts`;
   `instrumento.verify.test.ts` sigue verificando coincidencia carácter por carácter.
-- **Pendiente 2.º pass:** (a) el **aviso de privacidad** conserva usted (texto del autor; falta
-  su decisión de pasarlo a tú); (b) la **autoadscripción** indígena/afro ya está en tú, pero
-  falta alinear su redacción al texto literal del **Censo 2020** (básico vs ampliado).
+- **Pendiente 2.º pass:** (a) el **aviso** conserva usted (texto del autor; falta su decisión de
+  pasarlo a tú; ver D15); (b) la **autoadscripción** indígena/afro ya está en tú, pero falta
+  alinear su redacción al texto literal del **Censo 2020** (básico vs ampliado).
+
+## D15 — "Aviso general al encuestado" con aceptación explícita (sept. 2026)
+
+Sustituye el antiguo "aviso de privacidad" por el **Aviso general al encuestado** (texto
+definitivo del autor, 29 de septiembre de 2026, en usted). Decisión del autor.
+
+- **Consentimiento explícito por interacción:** el "Continuar" de la portada ya **no** avanza
+  directo. Abre un **modal** con el aviso completo; el botón **"Acepto y quiero participar"**
+  permanece deshabilitado hasta que el encuestado **se desplaza al final** del texto. Recién ahí
+  puede aceptar y avanzar a la cohorte. "Cerrar" regresa a la portada sin aceptar. El envío sigue
+  mandando `acepto_aviso: true` (sin cambio de backend ni de esquema).
+- **Fuente única del texto:** `components/encuesta/aviso.tsx` (`AvisoGeneralTexto`), reutilizado
+  por el modal y por la página pública. Es **texto de UI**, no del instrumento.
+- **Ruta pública:** se conserva el path `/aviso-de-privacidad` (para no romper enlaces externos),
+  pero su contenido y `<title>` ahora son el "Aviso general al encuestado". La portada ya no
+  enlaza a esa página: el aviso se muestra en el modal al continuar.

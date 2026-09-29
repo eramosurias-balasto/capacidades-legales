@@ -32,6 +32,7 @@ import {
   ProgressHairline,
   SelectField,
 } from './ds';
+import { AvisoGeneralTexto, AVISO_TITULO } from './aviso';
 
 // ————— tipos de paso —————
 type Paso =
@@ -99,6 +100,7 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
 
   const [idx, setIdx] = useState(0);
   const [datos, setDatos] = useState<Datos>(datosIniciales);
+  const [mostrarAviso, setMostrarAviso] = useState(false); // modal de consentimiento (se abre desde la portada)
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [yaEnviada, setYaEnviada] = useState(false);
@@ -177,14 +179,20 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
 
   function avanzar() {
     if (paso.kind === 'portada') {
-      inicioRef.current = Date.now();
-      setIdx((i) => i + 1);
+      // El "Continuar" de la portada abre el aviso al encuestado; la aceptación ocurre ahí.
+      setMostrarAviso(true);
       return;
     }
     if (esUltimo) {
       void enviar();
       return;
     }
+    setIdx((i) => i + 1);
+  }
+
+  function aceptarAviso() {
+    setMostrarAviso(false);
+    inicioRef.current = Date.now();
     setIdx((i) => i + 1);
   }
   function retroceder() {
@@ -255,7 +263,7 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
 
   const ctaLabel =
     paso.kind === 'portada'
-      ? 'Acepto y quiero continuar'
+      ? 'Continuar'
       : paso.kind === 'intro'
       ? 'Empezar la sección'
       : esUltimo
@@ -318,6 +326,8 @@ export function Encuesta({ slug, tipo }: { slug: string; tipo: TipoInstitucion }
           </div>
         )}
       </div>
+
+      {mostrarAviso ? <AvisoModal onAceptar={aceptarAviso} onCerrar={() => setMostrarAviso(false)} /> : null}
     </div>
   );
 }
@@ -357,11 +367,99 @@ function Portada() {
 
       <div style={{ borderTop: 'var(--rule-thin) solid var(--border-default)', paddingTop: 24 }}>
         <p style={{ margin: '0 0 20px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)', maxWidth: '48ch' }}>
-          Al continuar aceptas el{' '}
-          <a href="/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">aviso de privacidad</a> de este estudio. Tus respuestas son anónimas: no pedimos tu nombre ni datos que permitan identificarte.
+          Al continuar te mostraremos el aviso al encuestado; deberás leerlo y aceptarlo para participar. Tus respuestas son anónimas: no pedimos tu nombre ni datos que permitan identificarte.
         </p>
       </div>
     </section>
+  );
+}
+
+function AvisoModal({ onAceptar, onCerrar }: { onAceptar: () => void; onCerrar: () => void }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [alFinal, setAlFinal] = useState(false);
+
+  // Habilita "Aceptar" solo cuando el encuestado llega al final del aviso.
+  const revisarFondo = (el: HTMLDivElement) => {
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) setAlFinal(true);
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    // Si el aviso cabe sin necesidad de desplazarse (pantallas altas), habilita de una vez.
+    if (el && el.scrollHeight <= el.clientHeight + 24) setAlFinal(true);
+    // Bloquea el scroll del fondo mientras el modal está abierto.
+    const previo = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previo;
+    };
+  }, []);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={AVISO_TITULO}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        background: 'var(--overlay, rgba(20, 20, 20, 0.55))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          maxWidth: 600,
+          maxHeight: '92vh',
+          background: 'var(--white)',
+          borderRadius: 'var(--radius-md, 14px)',
+          border: 'var(--rule-thin) solid var(--border-default)',
+          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.28)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Encabezado fijo */}
+        <div style={{ padding: '24px 24px 16px', borderBottom: 'var(--rule-thin) solid var(--border-faint)' }}>
+          <Eyebrow>Antes de participar</Eyebrow>
+          <h2 style={{ ...tituloH2, fontSize: 'var(--text-h3)', margin: '10px 0 0' }}>{AVISO_TITULO}</h2>
+        </div>
+
+        {/* Cuerpo con scroll */}
+        <div
+          ref={scrollRef}
+          onScroll={(e) => revisarFondo(e.currentTarget)}
+          style={{ flex: 1, overflowY: 'auto', padding: '4px 24px 24px', WebkitOverflowScrolling: 'touch' }}
+        >
+          <AvisoGeneralTexto />
+        </div>
+
+        {/* Pie fijo con la acción */}
+        <div style={{ padding: '16px 24px', borderTop: 'var(--rule-thin) solid var(--border-faint)', background: 'var(--paper-50)' }}>
+          {!alFinal ? (
+            <p style={{ margin: '0 0 12px', fontSize: 'var(--text-xs)', lineHeight: 'var(--lh-normal)', color: 'var(--text-muted)', textAlign: 'center' }}>
+              Desplázate hasta el final del aviso para poder aceptar.
+            </p>
+          ) : null}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Button variant="ghost" size="md" onClick={onCerrar}>
+              Cerrar
+            </Button>
+            <div style={{ flex: 1 }}>
+              <Button variant="primary" size="lg" fullWidth disabled={!alFinal} onClick={onAceptar}>
+                Acepto y quiero participar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

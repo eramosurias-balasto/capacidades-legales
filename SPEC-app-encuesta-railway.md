@@ -9,7 +9,7 @@ Instrucciones para Claude Code. Construir una aplicación web que aplique la enc
 - Encuesta anónima en línea, en español, optimizada para celular (los alumnos la contestarán desde su teléfono).
 - Tres links distintos, uno por institución educativa, que identifican la procedencia de cada respuesta.
 - **Un cuarto link "general"** (`/encuesta/general`) para aplicar la MISMA encuesta a público adulto de conveniencia, reciclando el esquema. Las instituciones tienen `tipo` (`escolar` | `general`) que ramifica el flujo. La muestra general se analiza SIEMPRE por separado y funciona como piloto del instrumento (ver DECISIONES.md D10).
-- Flujo: aviso de privacidad → preguntas iniciales (cohorte de la materia de Derecho) → demografía → 5 escalas psicométricas → pantalla de agradecimiento.
+- Flujo: portada + aviso general al encuestado (aceptación explícita en modal) → preguntas iniciales (cohorte de la materia de Derecho) → demografía → 5 escalas psicométricas → pantalla de agradecimiento.
 - Resultados en Supabase (Postgres).
 - Dashboard protegido con contraseña que muestra resultados en tiempo real: puntuaciones brutas y convertidas a Rasch (tablas oficiales de P&B) y comparaciones por grupo.
 - La calibración Rasch con datos mexicanos NO se hace en la app: se hace offline en R con el paquete easyRasch (https://github.com/pgmj/easyRasch), sobre el CSV que exporta el dashboard. La app debe garantizar exports con el formato que easyRasch espera (sección 7.5).
@@ -29,7 +29,7 @@ Instrucciones para Claude Code. Construir una aplicación web que aplique la enc
 |---|---|
 | `/` | Redirige a página neutra "Encuesta no disponible sin link de institución" |
 | `/encuesta/[slug]` | Encuesta para la institución con ese slug. El flujo se ramifica según `instituciones.tipo` (`escolar` / `general`). `general` es el slug del público adulto. |
-| `/aviso-de-privacidad` | Aviso de privacidad (ruta pública, design system RU.L). Texto definitivo del autor (jul. 2026). |
+| `/aviso-de-privacidad` | Aviso general al encuestado (ruta pública, design system RU.L). Texto definitivo del autor (sept. 2026). Mismo texto que el modal de consentimiento. |
 | `/gracias` | Pantalla final |
 | `/dashboard` | Dashboard (login por contraseña) |
 | `/api/submit` | POST: recibe y valida una respuesta completa, calcula puntuaciones, inserta en Supabase |
@@ -115,7 +115,7 @@ En `items`, guardar el valor de captura crudo (índice de la opción elegida, 0�
 
 Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítems sin responder. Barra de progreso. Todo el texto de los ítems debe usarse EXACTAMENTE como aparece en la sección 5 — no parafrasear, no "mejorar" redacción: es un instrumento validado.
 
-1. **Aviso de privacidad.** Texto breve: encuesta anónima, fines académicos (tesina de licenciatura), sin datos identificables. El enlace "aviso de privacidad" apunta a la página interna `/aviso-de-privacidad` (ruta pública, mismo design system; abre en pestaña nueva), con el texto definitivo del autor. Botón único: **"Acepto y quiero continuar"**. Sin aceptar no hay encuesta.
+1. **Portada + Aviso general al encuestado (consentimiento explícito).** La portada resume el estudio (anónimo, fines académicos, sin datos identificables) con botón **"Continuar"**. Al pulsarlo se abre un **modal** con el **Aviso general al encuestado** (texto definitivo del autor); el botón **"Acepto y quiero participar"** solo se habilita cuando el encuestado se **desplaza hasta el final** del aviso. Sin aceptar no hay encuesta ("Cerrar" regresa a la portada). El mismo texto vive también en la ruta pública `/aviso-de-privacidad`. Ver DECISIONES.md D15.
 2. **Materia de Derecho (pantalla condicional según `tipo`).**
    - **`escolar`:** "¿Cuál es tu situación respecto a la materia de Derecho en tu escuela?" Opciones (radio): (a) "La cursé en primavera 2026" → `curso_primavera_2026`; (b) "La voy a cursar en otoño 2026" → `cursara_otono_2026`.
    - **`general`:** "¿Alguna vez ha cursado una clase de Derecho?" (radio Sí / No) → `general_si_curso` | `general_no_curso`. Si **Sí**, se revelan DOS campos OBLIGATORIOS: (a) tipo de programa (texto libre, máx. 200) → `curso_derecho_detalle`; (b) año en que terminó su última clase de Derecho (entero 1940–2026, no futuro) → `curso_derecho_anio` (0004).
