@@ -20,8 +20,8 @@ import type { Institucion, Respuesta } from './database.types';
 
 // Etiquetas de cohorte explícitas para el dashboard (más claras que "Sí"/"No").
 const LABEL_COHORTE: Record<string, string> = {
-  curso_primavera_2026: 'Cursó (primavera 2026)',
-  cursara_otono_2026: 'Cursará (otoño 2026)',
+  curso_primavera_2026: 'Ya cursó la materia',
+  cursara_otono_2026: 'Aún no la cursa',
   general_si_curso: 'Sí cursó Derecho',
   general_no_curso: 'No cursó Derecho',
 };

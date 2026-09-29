@@ -3,9 +3,9 @@
 // La instrucción de DPJ se reconstruyó según DECISIONES.md D1 (verificada carácter por carácter).
 // Ver lib/instrumento.verify.test.ts, que revalida cada string contra el SPEC.
 //
-// `preguntaCorta` es el ÚNICO campo agregado a mano: texto de UI (recordatorio por ítem),
-// decisión de presentación del autor (DECISIONES.md D13). NO es parte del instrumento
-// validado y NO lo cubre el test de verificación.
+// `preambuloIntro`/`preambuloCierre` y `ESCENARIOS` son TEXTO DE UI (preámbulo por ítem con
+// los escenarios en viñetas), decisión de presentación del autor (DECISIONES.md D13). NO son
+// parte del instrumento validado y NO los cubre el test de verificación.
 
 export type EscalaId = 'eaj' | 'eal' | 'clg' | 'iaj' | 'dpj';
 
@@ -17,16 +17,28 @@ export interface Escala {
   /** Instrucción introductoria, literal del instrumento. */
   instruccion: string;
   /**
-   * Recordatorio de la pregunta central en versión SINGULAR, para mostrar arriba de cada
-   * ítem. Es TEXTO DE UI (decisión de presentación del autor, ver DECISIONES.md D13), NO
-   * forma parte del instrumento validado: no lo cubre instrumento.verify.test.ts.
+   * Preámbulo por ítem (TEXTO DE UI, ver DECISIONES.md D13; NO es el instrumento validado):
+   * `preambuloIntro` (línea de entrada) + los `ESCENARIOS` en viñetas + `preambuloCierre`
+   * (cierre con la pregunta central en singular).
    */
-  preguntaCorta: string;
+  preambuloIntro: string;
+  preambuloCierre: string;
   /** Textos de los ítems, en orden. Literales del instrumento. */
   items: string[];
   /** Categorías de respuesta EN ORDEN DE CAPTURA (índice 0..3). */
   categorias: string[];
 }
+
+/**
+ * Escenarios hipotéticos de "problemas legales importantes" (los mismos del encuadre §3.2),
+ * mostrados como viñetas en el preámbulo de cada ítem. TEXTO DE UI (D13), no instrumento.
+ */
+export const ESCENARIOS: string[] = [
+  "Que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte.",
+  "Que resultes lesionado en un accidente por el descuido de otra persona.",
+  "Que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero.",
+  "Que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario.",
+];
 
 /** Orden canónico de las cinco escalas psicométricas. */
 export const ORDEN_ESCALAS: EscalaId[] = ['eaj', 'eal', 'clg', 'iaj', 'dpj'];
@@ -44,8 +56,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eaj: {
     id: "eaj",
     nombre: "Escala de autoeficacia jurídica (EAJ)",
-    // UI: recordatorio singular por ítem, en tú (ver DECISIONES.md D13).
-    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida te describe la siguiente afirmación?",
+    // UI: preámbulo por ítem con escenarios en viñetas, en tú (ver DECISIONES.md D13).
+    preambuloIntro: "Piensa en problemas legales importantes, como lo son los siguientes:",
+    preambuloCierre: "En estos casos, ¿en qué medida te describe la siguiente afirmación?",
     instruccion:
       "Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?",
     items: [
@@ -61,7 +74,8 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   eal: {
     id: "eal",
     nombre: "Escala de ansiedad legal (EAL)",
-    preguntaCorta: "Pensando en problemas legales importantes, ¿en qué medida te describe la siguiente afirmación?",
+    preambuloIntro: "Piensa en problemas legales importantes, como lo son los siguientes:",
+    preambuloCierre: "En estos casos, ¿en qué medida te describe la siguiente afirmación?",
     instruccion:
       "Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?",
     items: [
@@ -75,8 +89,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   clg: {
     id: "clg",
     nombre: "Escala de confianza jurídica general (CLG)",
-    preguntaCorta:
-      "Si te encontraras ante un conflicto legal importante, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en la siguiente situación?",
+    preambuloIntro: "Si te encontraras ante un conflicto legal importante, como lo son los siguientes:",
+    preambuloCierre:
+      "En estos casos, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en la siguiente situación?",
     instruccion:
       "Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?",
     items: [
@@ -92,8 +107,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   iaj: {
     id: "iaj",
     nombre: "Escala de inaccesibilidad a la justicia (IAJ)",
-    preguntaCorta:
-      "Considera tu impresión general y tu experiencia con el sistema de justicia. ¿En qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
+    preambuloIntro: "Piensa en el sistema de justicia que se ocupa de problemas como los siguientes:",
+    preambuloCierre:
+      "En estos casos, ¿en qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
       "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [
@@ -112,8 +128,9 @@ export const ESCALAS: Record<EscalaId, Escala> = {
   dpj: {
     id: "dpj",
     nombre: "Escala de desigualdad percibida de la justicia (DPJ)",
-    preguntaCorta:
-      "Considera tu impresión general y tu experiencia con el sistema de justicia. ¿En qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
+    preambuloIntro: "Piensa en el sistema de justicia que se ocupa de problemas como los siguientes:",
+    preambuloCierre:
+      "En estos casos, ¿en qué medida estás de acuerdo o en desacuerdo con la siguiente afirmación?",
     instruccion:
       "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?",
     items: [

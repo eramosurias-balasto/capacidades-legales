@@ -2,7 +2,7 @@
 
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EscalaId, ESCALAS, NUM_ITEMS, ORDEN_ESCALAS } from '@/lib/instrumento';
+import { EscalaId, ESCALAS, ESCENARIOS, NUM_ITEMS, ORDEN_ESCALAS } from '@/lib/instrumento';
 import {
   TipoInstitucion,
   GENEROS,
@@ -521,11 +521,18 @@ function ItemLikert({ paso, valor, onSelect }: { paso: { escala: EscalaId; item:
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-mono-sm)', letterSpacing: 'var(--tracking-mono)', color: 'var(--text-muted)' }}>{meta}</span>
       </div>
 
-      {/* Recordatorio persistente de la pregunta central (versión singular); la afirmación
-          sigue siendo la protagonista. Texto de UI de instrumento.ts (D13). */}
-      <p style={{ margin: '0 0 16px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
-        {e.preguntaCorta}
-      </p>
+      {/* Preámbulo persistente: encuadre con los escenarios en viñetas + cierre con la
+          pregunta central en singular. La afirmación sigue siendo la protagonista.
+          Texto de UI de instrumento.ts (D13). */}
+      <div style={{ margin: '0 0 24px', fontSize: 'var(--text-sm)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-secondary)' }}>
+        <p style={{ margin: 0 }}>{e.preambuloIntro}</p>
+        <ul style={{ margin: '10px 0 0', paddingInlineStart: '1.25em', listStyleType: 'disc' }}>
+          {ESCENARIOS.map((s, i) => (
+            <li key={i} style={{ margin: '0 0 4px' }}>{s}</li>
+          ))}
+        </ul>
+        <p style={{ margin: '12px 0 0' }}>{e.preambuloCierre}</p>
+      </div>
 
       <p
         key={meta}

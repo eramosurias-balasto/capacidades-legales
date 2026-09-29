@@ -115,8 +115,8 @@ export const ETIQUETAS_NIVEL_EDUCATIVO: Record<(typeof NIVELES_EDUCATIVOS_PADRES
 };
 
 export const ETIQUETAS_COHORTE: Record<Cohorte, string> = {
-  curso_primavera_2026: 'La cursé en primavera 2026',
-  cursara_otono_2026: 'La voy a cursar en otoño 2026',
+  curso_primavera_2026: 'Ya cursé la materia de Derecho en preparatoria',
+  cursara_otono_2026: 'Aún no curso la materia de Derecho en preparatoria',
   general_si_curso: 'Sí',
   general_no_curso: 'No',
 };

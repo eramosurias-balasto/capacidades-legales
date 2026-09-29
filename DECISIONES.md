@@ -155,14 +155,18 @@ en dos lugares, SIN tocar el instrumento validado:
 - **Pantalla de intro de cada escala:** la instrucción del instrumento se muestra **íntegra y
   verbatim**; solo se **resalta en negritas su oración-pregunta final** (se parte el string en
   el último `¿`, sin alterar caracteres). Es puro estilo; el texto no cambia.
-- **Cada pantalla de ítem:** arriba de la afirmación se muestra un **recordatorio en versión
-  singular** de la pregunta central, en texto secundario (la afirmación sigue siendo la
-  protagonista). Estos recordatorios son **texto de UI**, viven en `lib/instrumento.ts` como el
-  campo nuevo `preguntaCorta` (uno por escala) y **no forman parte del instrumento**: no los
-  cubre `instrumento.verify.test.ts`, que sigue pasando sin cambios.
+- **Cada pantalla de ítem:** arriba de la afirmación se muestra un **preámbulo** con el encuadre
+  completo, en texto secundario (la afirmación sigue siendo la protagonista): una línea de entrada
+  (`preambuloIntro`), los **escenarios hipotéticos en viñetas** (`ESCENARIOS`, los mismos cuatro
+  del encuadre §3.2) y un cierre con la pregunta central en singular (`preambuloCierre`). Así el
+  encuestado ve en cada afirmación qué "problemas legales importantes" debe imaginar. Estos textos
+  son **texto de UI**, viven en `lib/instrumento.ts` (`preambuloIntro`/`preambuloCierre` por escala
+  y el arreglo `ESCENARIOS`) y **no forman parte del instrumento**: no los cubre
+  `instrumento.verify.test.ts`, que sigue pasando sin cambios.
 
-**Nota:** los recordatorios están en **tú** (D14) y usan "problemas legales", igual que las
-instrucciones completas tras la unificación de D14 (antes EAJ decía "jurídicos").
+**Nota:** el preámbulo está en **tú** (D14) y usa "problemas legales", igual que las instrucciones
+completas tras la unificación de D14 (antes EAJ decía "jurídicos"). El campo original `preguntaCorta`
+(recordatorio de una sola línea) fue reemplazado por este preámbulo con viñetas.
 
 ## D14 — Registro **tú** y encuadre adaptado del instrumento (sept. 2026)
 
