@@ -539,7 +539,7 @@ function Demografia({ tipo, datos, set }: { tipo: TipoInstitucion; datos: Datos;
         <GrupoChips label="Género" opciones={opcionesSelect(GENEROS, ETIQUETAS_GENERO)} valor={datos.genero} onChange={(v) => set('genero', v)} />
         {/* Autoadscripción: redacción y categorías del Censo de Población y Vivienda 2020 (D16). */}
         <GrupoChips label="De acuerdo con tu cultura, ¿te consideras indígena?" opciones={opcionesSelect(AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION)} valor={datos.se_considera_indigena} onChange={(v) => set('se_considera_indigena', v)} />
-        <GrupoChips label="Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te consideras afromexicano(a), negro(a) o afrodescendiente?" opciones={opcionesSelect(AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION)} valor={datos.se_considera_afro} onChange={(v) => set('se_considera_afro', v)} />
+        <GrupoChips label="Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te consideras afromexicano(a) o afrodescendiente?" opciones={opcionesSelect(AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION)} valor={datos.se_considera_afro} onChange={(v) => set('se_considera_afro', v)} />
 
         {tipo === 'general' ? (
           <SelectField label="Máximo nivel de estudios" value={datos.nivel_educativo_propio} onChange={(v) => set('nivel_educativo_propio', v)} options={opcionesSelect(NIVELES_EDUCATIVOS_PROPIO, ETIQUETAS_NIVEL_EDUCATIVO)} required />

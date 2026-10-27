@@ -215,7 +215,8 @@ del autor.
 - **Redacción (en tú):**
   - Indígena: *"De acuerdo con tu cultura, ¿te consideras indígena?"*
   - Afromexicano: *"Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te
-    consideras afromexicano(a), negro(a) o afrodescendiente?"*
+    consideras afromexicano(a), negro(a) o afrodescendiente?"* (posteriormente **"negro(a)"** se
+    retiró en D17, por decisión del autor).
 - **Categorías:** **Sí / Sí, en parte / No / No sé** (valores `si` / `si_en_parte` / `no` /
   `no_se`). Se **elimina** "Prefiero no responder" de estas dos preguntas para coincidir con el
   Censo. Catálogo dedicado `AUTOADSCRIPCION` (antes compartían el genérico `SI_NO_PNR`, ya
@@ -224,3 +225,24 @@ del autor.
   (sin `CHECK`); la validación de catálogo es de capa de aplicación. Respuestas previas con
   `prefiero_no_responder` (si las hubiera) siguen almacenadas; el dashboard solo grafica las
   cuatro categorías vigentes.
+
+## D17 — Instrumento definitivo: ajustes de texto del autor (oct. 2026)
+
+El autor entregó el **instrumento definitivo** (Word). Se alinearon las páginas publicadas a él.
+Decisiones del autor; los textos de los reactivos de las escalas no cambian.
+
+- **Aviso reescrito** (`components/encuesta/aviso.tsx`): de 8 a **5 secciones** (Naturaleza del
+  estudio · Finalidad · Anonimato y Seguridad de los Datos · Participación voluntaria · Dudas),
+  título **"Aviso general a la persona encuestada"**, fecha **27 de octubre de 2026**. Respecto a
+  la versión anterior se **omite** la frase sobre la autorización de la dirección y el listado
+  explícito de las siete variables de contexto; el cierre conserva "el encuestado manifiesta…".
+- **Autoadscripción afro:** se **omite "negro(a)"** → "¿te consideras afromexicano(a) o
+  afrodescendiente?". ⚠️ Se aparta del texto literal del Censo 2020 y de §3.2 de la tesina
+  (que incluyen "negro(a)"). Decisión expresa del autor (ajusta también el título en el dashboard).
+- **Encuadre, ejemplo 2 — lenguaje incluyente:** "resultes lesionado" → **"resultes lesionado(a)"**,
+  aplicado de forma consistente en la viñeta (`ESCENARIOS`) y en las **instrucciones** de las cinco
+  escalas; se actualizó el SPEC §5 en paralelo para que `instrumento.verify.test.ts` siga en verde.
+  ⚠️ La tesina (§3.2 y Anexo) aún dice "lesionado" sin "(a)"; conviene alinearla.
+- **Nombre de la escala 4:** "inaccesibilidad **a** la justicia" → "inaccesibilidad **de** la
+  justicia" (coincide con el Anexo 1 de la tesina). No es visible para el estudiante; aparece en
+  el dashboard/exports y en el SPEC §5.4.

@@ -1,12 +1,12 @@
 # Instrumento — Encuesta de Capacidades Legales (P&B 2018, adaptación México)
 
 > Textos VALIDADOS. No modificar ni una letra. Generado desde `lib/instrumento.ts`.
-> Registro **tú**; encuadre adaptado a población de EMS (ver DECISIONES.md D14).
+> Registro **tú**; encuadre adaptado a población de EMS (ver DECISIONES.md D14, D17).
 > Las categorías de respuesta se listan EN ORDEN DE CAPTURA (índice 0 → 3).
 
 ## Escala de autoeficacia jurídica (EAJ)
 
-**Instrucción:** Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?
+**Instrucción:** Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?
 
 **Ítems (6):**
 
@@ -21,7 +21,7 @@
 
 ## Escala de ansiedad legal (EAL)
 
-**Instrucción:** Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?
+**Instrucción:** Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?
 
 **Ítems (4):**
 
@@ -34,7 +34,7 @@
 
 ## Escala de confianza jurídica general (CLG)
 
-**Instrucción:** Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?
+**Instrucción:** Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?
 
 **Ítems (6):**
 
@@ -47,9 +47,9 @@
 
 **Categorías de respuesta (en orden):** muy seguro / bastante seguro / no muy seguro / nada seguro.
 
-## Escala de inaccesibilidad a la justicia (IAJ)
+## Escala de inaccesibilidad de la justicia (IAJ)
 
-**Instrucción:** Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?
+**Instrucción:** Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?
 
 **Ítems (9):**
 
@@ -67,7 +67,7 @@
 
 ## Escala de desigualdad percibida de la justicia (DPJ)
 
-**Instrucción:** Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?
+**Instrucción:** Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Pensando en cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?
 
 **Ítems (6):**
 

@@ -9,7 +9,7 @@ Instrucciones para Claude Code. Construir una aplicación web que aplique la enc
 - Encuesta anónima en línea, en español, optimizada para celular (los alumnos la contestarán desde su teléfono).
 - Tres links distintos, uno por institución educativa, que identifican la procedencia de cada respuesta.
 - **Un cuarto link "general"** (`/encuesta/general`) para aplicar la MISMA encuesta a público adulto de conveniencia, reciclando el esquema. Las instituciones tienen `tipo` (`escolar` | `general`) que ramifica el flujo. La muestra general se analiza SIEMPRE por separado y funciona como piloto del instrumento (ver DECISIONES.md D10).
-- Flujo: portada + aviso general al encuestado (aceptación explícita en modal) → preguntas iniciales (cohorte de la materia de Derecho) → demografía → 5 escalas psicométricas → pantalla de agradecimiento.
+- Flujo: portada + aviso general a la persona encuestada (aceptación explícita en modal) → preguntas iniciales (cohorte de la materia de Derecho) → demografía → 5 escalas psicométricas → pantalla de agradecimiento.
 - Resultados en Supabase (Postgres).
 - Dashboard protegido con contraseña que muestra resultados en tiempo real: puntuaciones brutas y convertidas a Rasch (tablas oficiales de P&B) y comparaciones por grupo.
 - La calibración Rasch con datos mexicanos NO se hace en la app: se hace offline en R con el paquete easyRasch (https://github.com/pgmj/easyRasch), sobre el CSV que exporta el dashboard. La app debe garantizar exports con el formato que easyRasch espera (sección 7.5).
@@ -29,7 +29,7 @@ Instrucciones para Claude Code. Construir una aplicación web que aplique la enc
 |---|---|
 | `/` | Redirige a página neutra "Encuesta no disponible sin link de institución" |
 | `/encuesta/[slug]` | Encuesta para la institución con ese slug. El flujo se ramifica según `instituciones.tipo` (`escolar` / `general`). `general` es el slug del público adulto. |
-| `/aviso-de-privacidad` | Aviso general al encuestado (ruta pública, design system RU.L). Texto definitivo del autor (sept. 2026). Mismo texto que el modal de consentimiento. |
+| `/aviso-de-privacidad` | Aviso general a la persona encuestada (ruta pública, design system RU.L). Texto definitivo del autor (oct. 2026). Mismo texto que el modal de consentimiento. |
 | `/gracias` | Pantalla final |
 | `/dashboard` | Dashboard (login por contraseña) |
 | `/api/submit` | POST: recibe y valida una respuesta completa, calcula puntuaciones, inserta en Supabase |
@@ -115,7 +115,7 @@ En `items`, guardar el valor de captura crudo (índice de la opción elegida, 0�
 
 Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítems sin responder. Barra de progreso. Todo el texto de los ítems debe usarse EXACTAMENTE como aparece en la sección 5 — no parafrasear, no "mejorar" redacción: es un instrumento validado.
 
-1. **Portada + Aviso general al encuestado (consentimiento explícito).** La portada resume el estudio (anónimo, fines académicos, sin datos identificables) con botón **"Continuar"**. Al pulsarlo se abre un **modal** con el **Aviso general al encuestado** (texto definitivo del autor); el botón **"Acepto y quiero participar"** solo se habilita cuando el encuestado se **desplaza hasta el final** del aviso. Sin aceptar no hay encuesta ("Cerrar" regresa a la portada). El mismo texto vive también en la ruta pública `/aviso-de-privacidad`. Ver DECISIONES.md D15.
+1. **Portada + Aviso general a la persona encuestada (consentimiento explícito).** La portada resume el estudio (anónimo, fines académicos, sin datos identificables) con botón **"Continuar"**. Al pulsarlo se abre un **modal** con el **Aviso general a la persona encuestada** (texto definitivo del autor, 27 oct. 2026, 5 secciones); el botón **"Acepto y quiero participar"** solo se habilita cuando el encuestado se **desplaza hasta el final** del aviso. Sin aceptar no hay encuesta ("Cerrar" regresa a la portada). El mismo texto vive también en la ruta pública `/aviso-de-privacidad`. Ver DECISIONES.md D15 y D17.
 2. **Materia de Derecho (pantalla condicional según `tipo`).**
    - **`escolar`:** "¿Cuál es tu situación respecto a la materia de Derecho en tu escuela?" Opciones (radio): (a) "La cursé en primavera 2026" → `curso_primavera_2026`; (b) "La voy a cursar en otoño 2026" → `cursara_otono_2026`.
    - **`general`:** "¿Alguna vez ha cursado una clase de Derecho?" (radio Sí / No) → `general_si_curso` | `general_no_curso`. Si **Sí**, se revelan DOS campos OBLIGATORIOS: (a) tipo de programa (texto libre, máx. 200) → `curso_derecho_detalle`; (b) año en que terminó su última clase de Derecho (entero 1940–2026, no futuro) → `curso_derecho_anio` (0004).
@@ -123,7 +123,7 @@ Una sección por pantalla, con botón "Siguiente". No permitir avanzar con ítem
    - Edad: campo numérico (12–99).
    - Género: Mujer / Hombre / Otro / Prefiero no responder.
    - "De acuerdo con tu cultura, ¿te consideras indígena?": Sí / Sí, en parte / No / No sé (Censo 2020, D16).
-   - "Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te consideras afromexicano(a), negro(a) o afrodescendiente?": Sí / Sí, en parte / No / No sé (Censo 2020, D16).
+   - "Por tus antepasados y de acuerdo con tus costumbres y tradiciones, ¿te consideras afromexicano(a) o afrodescendiente?": Sí / Sí, en parte / No / No sé (base en Censo 2020; se omite "negro(a)" por decisión del autor, D17).
    - "…máximo nivel de estudios del padre" y "…de la madre" como **dropdown** (mismas opciones, se preguntan a TODOS): Sin estudios / Primaria / Secundaria / Preparatoria o bachillerato / Licenciatura / Posgrado / No lo sé.
    - **Entidad federativa** (dropdown, obligatoria para TODOS, 0004): las 32 entidades oficiales + "Prefiero no responder" → `entidad`.
    - **Solo `general`** (además de lo anterior): "Máximo nivel de estudios" propio como **dropdown** (mismo catálogo que padres pero SIN "No lo sé") → `nivel_educativo_propio`, obligatorio; y "¿Cuál es su ocupación?" (texto libre, máx. 120, obligatorio) → `ocupacion`.
@@ -138,7 +138,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.1 Escala de autoeficacia jurídica (EAJ) — 6 ítems
 
-*Instrucción:* "Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
+*Instrucción:* "Piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
 
 1. Siempre consigo resolver problemas difíciles si me esfuerzo lo suficiente.
 2. Si alguien se opone a mí, puedo encontrar los medios y las formas de conseguir lo que quiero.
@@ -151,7 +151,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.2 Escala de ansiedad legal (EAL) — 4 ítems
 
-*Instrucción:* "Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
+*Instrucción:* "Ahora, piensa en general en problemas legales importantes, como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. ¿En qué medida te describen las siguientes afirmaciones?"
 
 1. Me da miedo hablar directamente con la gente para hacer valer mis derechos.
 2. La preocupación por no expresarme con claridad puede impedirme actuar.
@@ -162,7 +162,7 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 ### 5.3 Escala de confianza jurídica general (CLG) — 6 ítems
 
-*Instrucción:* "Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?"
+*Instrucción:* "Si te encontraras ante un conflicto legal importante —como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario—, ¿qué grado de confianza tienes en que podrías lograr un resultado justo y satisfactorio para ti en las siguientes situaciones?"
 
 1. El desacuerdo es considerable y la tensión es alta.
 2. La otra parte dice que "no descansará hasta que se haga justicia".
@@ -173,9 +173,9 @@ Anti-duplicados: bloquear reenvío con `localStorage` (flag por slug) y deshabil
 
 *Categorías (mostrar en este orden, como en el instrumento):* muy seguro / bastante seguro / no muy seguro / nada seguro.
 
-### 5.4 Escala de inaccesibilidad a la justicia (IAJ) — 9 ítems
+### 5.4 Escala de inaccesibilidad de la justicia (IAJ) — 9 ítems
 
-*Instrucción:* "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?"
+*Instrucción:* "Ahora, algunas preguntas sobre tu impresión general y tu experiencia con el sistema de justicia. No nos interesa el sistema de justicia penal. Nos interesa el sistema de justicia que se ocupa de cuestiones como que te despidan de un trabajo sin causa justificada o no te paguen lo que acordaron pagarte, que resultes lesionado(a) en un accidente por el descuido de otra persona, que te vendan un producto o un servicio defectuoso y se nieguen a devolverte tu dinero, o que tu familia tenga que dejar la vivienda en la que vive por un conflicto con el arrendador o el propietario. Teniendo en cuenta cuestiones como estas, ¿en qué medida estás de acuerdo o en desacuerdo con las siguientes afirmaciones?"
 
 1. Cuestiones como estas suelen resolverse con rapidez y eficacia.
 2. Las personas con menos recursos económicos suelen obtener un resultado peor.

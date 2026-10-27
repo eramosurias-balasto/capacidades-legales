@@ -1,11 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react';
 
-// Texto del "Aviso general al encuestado" entregado por el autor (29 de septiembre de 2026).
-// Fuente única compartida por el modal de consentimiento del flujo (components/encuesta/Encuesta.tsx)
-// y la página pública /aviso-de-privacidad. No es texto del instrumento validado.
+// Texto del "Aviso general a la persona encuestada" — versión definitiva del autor
+// (27 de octubre de 2026; instrumento definitivo). Fuente única compartida por el modal de
+// consentimiento del flujo (components/encuesta/Encuesta.tsx) y la página pública
+// /aviso-de-privacidad. No es texto del instrumento validado.
 
-export const AVISO_TITULO = 'Aviso general al encuestado';
-export const AVISO_ACTUALIZADO = '29 de septiembre de 2026';
+export const AVISO_TITULO = 'Aviso general a la persona encuestada';
+export const AVISO_ACTUALIZADO = '27 de octubre de 2026';
 
 const h2: CSSProperties = {
   margin: '28px 0 8px',
@@ -28,46 +29,28 @@ const SECCIONES: { n: number; titulo: string; cuerpo: ReactNode }[] = [
     n: 1,
     titulo: 'Naturaleza del estudio',
     cuerpo:
-      'La presente encuesta forma parte de la tesina de licenciatura en derecho de Ernesto Ramos Urías, en el Instituto Tecnológico Autónomo de México, bajo la dirección de la Dra. Ana María Zorrilla Noriega. Se trata de un trabajo de carácter estrictamente académico; el cuestionario no evalúa a quien lo responde ni tiene incidencia alguna en su desempeño escolar.',
+      'La presente encuesta forma parte de la tesina para obtener el título de Licenciatura en Derecho por el Instituto Tecnológico Autónomo de México, del autor Ernesto Ramos Urías, bajo la dirección de la Dra. Ana María Zorrilla Noriega. Se trata de un trabajo de carácter académico; el cuestionario no evalúa a quien lo responde ni busca tener incidencia alguna en su desempeño escolar.',
   },
   {
     n: 2,
     titulo: 'Finalidad',
     cuerpo:
-      'El estudio busca determinar si un instrumento desarrollado en Inglaterra para medir la confianza de una persona ante un problema legal funciona igualmente entre estudiantes mexicanos de educación media superior. El análisis recae sobre el comportamiento del instrumento, no sobre las respuestas individuales, y sus resultados se presentan siempre de forma agregada.',
+      'El estudio busca determinar si un instrumento desarrollado en Inglaterra para medir la confianza de una persona ante un problema legal funciona igualmente entre estudiantes mexicanos de Educación Media Superior. El análisis recae sobre el comportamiento del instrumento, no sobre las respuestas individuales, y sus resultados se presentan siempre de forma agregada.',
   },
   {
     n: 3,
-    titulo: 'Información que se recaba',
+    titulo: 'Anonimato y Seguridad de los Datos',
     cuerpo:
-      'Además de las respuestas al cuestionario, se recaban siete datos de contexto: edad, género, autoadscripción indígena, autoadscripción afromexicana o afrodescendiente, nivel máximo de estudios del padre, nivel máximo de estudios de la madre y entidad federativa. Las dos preguntas de autoadscripción se formulan en los mismos términos que emplea el Censo de Población y Vivienda.',
+      'No se solicita el nombre, correo electrónico, teléfono ni domicilio de quien responde la encuesta. Tampoco se guarda su dirección IP. El enlace de acceso permite identificar únicamente a la escuela de procedencia, pero no a la persona. Como no se recopila información que permita identificar directamente a los participantes, las respuestas no pueden relacionarse con una persona en particular. Sin embargo, en grupos pequeños, la combinación de algunos datos podría dar indicios sobre la identidad de alguien. La información se guarda en una base de datos a la que únicamente tiene acceso el autor del estudio. No se vende ni se comparte con la escuela, sus profesores o terceros con fines comerciales. Los datos podrían compartirse con otros investigadores para que puedan revisar o repetir el estudio, siempre que se elimine cualquier información que permita identificar a los participantes.',
   },
   {
     n: 4,
-    titulo: 'Información que no se recaba',
+    titulo: 'Participación voluntaria',
     cuerpo:
-      'No se solicita el nombre, el correo electrónico, el teléfono ni el domicilio de quien responde, ni se almacena su dirección IP. El enlace de acceso identifica únicamente a la institución educativa de procedencia, y no a la persona.',
+      'Responder es enteramente voluntario. Es posible no participar, o abandonar el cuestionario en cualquier momento antes de enviarlo, sin que ello traiga consecuencia alguna; en tal caso, las respuestas no quedan registradas.',
   },
   {
     n: 5,
-    titulo: 'Anonimato',
-    cuerpo:
-      'Toda vez que no se recaba dato alguno que identifique al encuestado, sus respuestas no pueden vincularse con él de manera directa. No obstante, la combinación de varios datos de contexto podría, dentro de un grupo reducido, apuntar a una persona.',
-  },
-  {
-    n: 6,
-    titulo: 'Resguardo de la información',
-    cuerpo:
-      'La información se almacena en una base de datos a la que sólo tiene acceso el autor del estudio. No se vende, no se comparte con la institución educativa ni con su personal docente, y no se transfiere a terceros con fines comerciales. Los datos, desprovistos de cualquier elemento identificable, podrían compartirse con otros investigadores para verificar o replicar el análisis, conforme a la práctica ordinaria en la investigación académica.',
-  },
-  {
-    n: 7,
-    titulo: 'Participación voluntaria',
-    cuerpo:
-      'La dirección de la institución autorizó la aplicación de la encuesta, pero dicha autorización no sustituye la decisión de cada estudiante: responder es enteramente voluntario. Es posible no participar, o abandonar el cuestionario en cualquier momento antes de enviarlo, sin que ello traiga consecuencia alguna; en tal caso, las respuestas no quedan registradas.',
-  },
-  {
-    n: 8,
     titulo: 'Dudas',
     cuerpo: (
       <>

@@ -252,7 +252,7 @@ export function construirResultados(respuestas: Respuesta[], instituciones: Inst
     const base: DemografiaTipo = {
       genero: tablaCat(rows, (r) => r.genero, GENEROS, ETIQUETAS_GENERO, 'Género'),
       indigena: tablaCat(rows, (r) => r.se_considera_indigena, AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION, '¿Se considera indígena?'),
-      afro: tablaCat(rows, (r) => r.se_considera_afro, AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION, '¿Se considera afromexicano/a, negro/a o afrodescendiente?'),
+      afro: tablaCat(rows, (r) => r.se_considera_afro, AUTOADSCRIPCION, ETIQUETAS_AUTOADSCRIPCION, '¿Se considera afromexicano/a o afrodescendiente?'),
       nivelPadre: tablaCat(rows, (r) => r.nivel_educativo_padre, NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO, 'Nivel educativo del padre'),
       nivelMadre: tablaCat(rows, (r) => r.nivel_educativo_madre, NIVELES_EDUCATIVOS_PADRES, ETIQUETAS_NIVEL_EDUCATIVO, 'Nivel educativo de la madre'),
       edad: tablaEdad(rows),
