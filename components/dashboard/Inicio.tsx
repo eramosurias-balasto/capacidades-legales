@@ -45,7 +45,7 @@ export function Inicio() {
 
       <Card title="Quiénes responden">
         <p className="text-sm leading-relaxed text-slate-700">
-          Estudiantes de educación media superior de tres instituciones participantes, mediante enlaces dedicados que permiten comparar
+          Estudiantes de educación media superior de las instituciones participantes, mediante enlaces dedicados que permiten comparar
           dos cohortes: quienes cursaron la materia de Derecho en primavera de 2026 y quienes la cursarán en otoño de 2026.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-slate-700">
