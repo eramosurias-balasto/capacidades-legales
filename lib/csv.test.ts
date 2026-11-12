@@ -3,7 +3,7 @@ import { construirCsvMaestro, construirCsvRasch, COLUMNAS_DIF } from './csv';
 import type { Institucion, Respuesta } from './database.types';
 
 const instituciones: Institucion[] = [
-  { id: 1, slug: 'inst-a', nombre: 'Institución A', activa: true, tipo: 'escolar' },
+  { id: 1, slug: 'inst-a', nombre: 'Institución A', activa: true, tipo: 'escolar', sostenimiento: 'privada', sistema: 'sep' },
 ];
 
 // Respuesta conocida (misma verificada end-to-end): brutas esperadas
@@ -61,6 +61,11 @@ describe('CSV maestro', () => {
     expect(f.institucion_slug).toBe('inst-a');
     expect(f.cohorte).toBe('curso_primavera_2026');
     expect(f.edad).toBe('17');
+  });
+
+  it('incluye la clasificación sostenimiento/sistema (migración 0006)', () => {
+    expect(f.institucion_sostenimiento).toBe('privada');
+    expect(f.institucion_sistema).toBe('sep');
   });
 
   it('incluye las columnas nuevas entidad y curso_derecho_anio', () => {

@@ -26,7 +26,7 @@ export function getSupabaseAdmin(): SupabaseClient {
 export async function getInstitucionActiva(slug: string): Promise<Institucion | null> {
   const { data, error } = await getSupabaseAdmin()
     .from('instituciones')
-    .select('id, slug, nombre, activa, tipo')
+    .select('id, slug, nombre, activa, tipo, sostenimiento, sistema')
     .eq('slug', slug)
     .eq('activa', true)
     .maybeSingle();
@@ -41,7 +41,7 @@ export async function getInstitucionActiva(slug: string): Promise<Institucion | 
 export async function getInstituciones(): Promise<Institucion[]> {
   const { data, error } = await getSupabaseAdmin()
     .from('instituciones')
-    .select('id, slug, nombre, activa, tipo')
+    .select('id, slug, nombre, activa, tipo, sostenimiento, sistema')
     .order('id');
   if (error) throw new Error(`Error consultando instituciones: ${error.message}`);
   return (data as Institucion[]) ?? [];

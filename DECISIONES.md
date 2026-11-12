@@ -246,3 +246,27 @@ Decisiones del autor; los textos de los reactivos de las escalas no cambian.
 - **Nombre de la escala 4:** "inaccesibilidad **a** la justicia" → "inaccesibilidad **de** la
   justicia" (coincide con el Anexo 1 de la tesina). No es visible para el estudiante; aparece en
   el dashboard/exports y en el SPEC §5.4.
+
+## D18 — Clasificación de instituciones (sostenimiento × sistema) y más prepas privadas (nov. 2026)
+
+El autor incorpora prepas adicionales (empezando por una privada) y necesita distinguirlas en la
+data. Decisión del autor; implementada en la **migración 0006** (aditiva).
+
+- **Modelo: cada escuela es su propia fila** (`instituciones`) con su `slug` no-adivinable y su
+  `nombre` real. El código no hardcodea slugs escolares (D8), así que sumar una escuela es solo un
+  INSERT/UPDATE; no toca el flujo ni el scoring. `dif_institucion` (= slug) ya las separa en los
+  exports y el dashboard las lista por nombre.
+- **Primera prepa privada — reutiliza el placeholder:** la fila placeholder `enc-2pit26`
+  ("Institución Privada", seed de 0005) se **renombra** a **"Preparatoria Maestro Antonio Caso"**.
+  El **slug no cambia**, así que el link `/encuesta/enc-2pit26` ya repartido sigue válido. Las
+  siguientes prepas privadas entran como filas nuevas con su propio `enc-XXXXXX`.
+- **Dos ejes de clasificación** (columnas nuevas, NULLABLE, con CHECK; se validan a nivel app):
+  - `sostenimiento`: `publica` | `privada` (sostenimiento financiero).
+  - `sistema`: `unam` | `sep` (autoridad a la que la escuela **pertenece** —ENP— o a la que está
+    **incorporada** —privadas: clave de incorporación UNAM o RVOE SEP).
+  - Backfill: ENP (`enc-9cxazi`) = publica·unam · MCCEMS (`enc-eekk8z`) = publica·sep ·
+    Antonio Caso (`enc-2pit26`) = privada·unam. `general` queda en **NULL/NULL** (no es escuela).
+- **Exports:** el CSV maestro (`/api/export`) agrega `institucion_sostenimiento` e
+  `institucion_sistema`. El CSV easyRasch (`/api/export-rasch`) **no cambia** (conserva el contrato
+  de `COLUMNAS_DIF` de D6); para DIF por sector se puede mapear slug→sector en R, o añadir una
+  columna `dif_*` después si se decide. El dashboard aún no agrupa por estos ejes (no se pidió).

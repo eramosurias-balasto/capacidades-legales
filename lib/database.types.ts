@@ -13,6 +13,9 @@ export interface Institucion {
   nombre: string;
   activa: boolean;
   tipo: TipoInstitucion; // 'escolar' | 'general' (migración 0003)
+  // Clasificación para análisis (migración 0006); null en 'general'. Catálogo validado por CHECK en la BD.
+  sostenimiento?: 'publica' | 'privada' | null; // sostenimiento financiero de la escuela
+  sistema?: 'unam' | 'sep' | null; // autoridad: pertenencia (ENP) o incorporación (privadas: clave UNAM / RVOE SEP)
 }
 
 export interface Respuesta {
